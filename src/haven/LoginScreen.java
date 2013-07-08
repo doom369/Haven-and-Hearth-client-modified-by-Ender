@@ -26,12 +26,7 @@
 
 package haven;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 
 public class LoginScreen extends Widget {
@@ -217,17 +212,17 @@ public class LoginScreen extends Widget {
 	
     public void uimsg(String msg, Object... args) {
 	synchronized(ui) {
-	    if(msg == "passwd") {
+	    if(msg.equals("passwd")) {
 		clear();
 		cur = new Pwbox((String)args[0], (Boolean)args[1]);
 		mklogin();
-	    } else if(msg == "token") {
+	    } else if(msg.equals("token")) {
 		clear();
 		cur = new Tokenbox((String)args[0]);
 		mklogin();
-	    } else if(msg == "error") {
+	    } else if(msg.equals("error")) {
 		error((String)args[0]);
-	    } else if(msg == "prg") {
+	    } else if(msg.equals("prg")) {
 		error(null);
 		clear();
 		progress((String)args[0]);

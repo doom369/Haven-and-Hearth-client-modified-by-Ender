@@ -3,8 +3,10 @@ package haven;
 import jerklib.ConnectionManager;
 import jerklib.Profile;
 import jerklib.Session;
-import jerklib.events.*;
+import jerklib.events.IRCEvent;
 import jerklib.events.IRCEvent.Type;
+import jerklib.events.JoinCompleteEvent;
+import jerklib.events.MessageEvent;
 import jerklib.listeners.IRCEventListener;
 
 /**
@@ -71,10 +73,7 @@ public class GlobalChat implements IRCEventListener
 	    bodyisready = true;
 	    chhw.gcrcv("Global chat is ready.");
 	}
-	else
-	{
-	    // System.out.println(e.getType() + " " + e.getRawEventData());
-	}
+
     }
     
     public void close(String quitMessage){

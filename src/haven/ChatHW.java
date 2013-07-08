@@ -26,13 +26,13 @@
 
 package haven;
 
-import java.awt.Color;
+import ender.GoogleTranslator;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import ender.GoogleTranslator;
 
 public class ChatHW extends HWindow {
     TextEntry in;
@@ -89,7 +89,7 @@ public class ChatHW extends HWindow {
     }
 
     public void uimsg(String msg, Object... args) {
-	if(msg == "log") {
+	if(msg.equals("log")) {
 
 	    if(Config.muteChat){return;}
 
@@ -119,7 +119,7 @@ public class ChatHW extends HWindow {
 		    str = Utils.timestamp() + str;
 		out.append(str, col);
 	    }
-	} else if(msg == "focusme") {
+	} else if(msg.equals("focusme")) {
 	    shp.setawnd(this, true);
 	    setfocus(in);
 	} else {
@@ -129,7 +129,7 @@ public class ChatHW extends HWindow {
 
     public void wdgmsg(Widget sender, String msg, Object... args) {
 	if(sender == in) {
-	    if(msg == "activate") {
+	    if(msg.equals("activate")) {
 		wdgmsg("msg", args[0]);
 		in.settext("");
 		return;

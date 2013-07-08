@@ -56,10 +56,6 @@ public class IBox {
 	return(new Coord(bl.sz().x, bt.sz().y));
     }
 	
-    public Coord ctloff() {
-	return(ctl.sz());
-    }
-	
     public Coord bisz() {
 	return(new Coord(bl.sz().x + br.sz().x, bt.sz().y + bb.sz().y));
     }

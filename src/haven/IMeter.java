@@ -26,7 +26,7 @@
 
 package haven;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -83,12 +83,12 @@ public class IMeter extends Widget {
     }
     
     public void uimsg(String msg, Object... args) {
-	if(msg == "set") {
+	if(msg.equals("set")) {
 	    List<Meter> meters = new LinkedList<Meter>();
 	    for(int i = 0; i < args.length; i += 2)
 		meters.add(new Meter((Color)args[i], (Integer)args[i + 1]));
 	    this.meters = meters;
-	} else if(msg == "tt") {
+	} else if(msg.equals("tt")) {
 	    tooltip = args[0];
 	} else {
 	    super.uimsg(msg, args);

@@ -47,7 +47,7 @@ public class Logwindow extends HWindow {
     }
 	
     public void uimsg(String name, Object... args) {
-	if(name == "log") {
+	if(name.equals("log")) {
 	    log.append((String)args[0]);
 	} else {
 	    super.uimsg(name, args);

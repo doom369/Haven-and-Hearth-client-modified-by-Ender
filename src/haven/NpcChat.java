@@ -26,7 +26,7 @@
 
 package haven;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -48,12 +48,12 @@ public class NpcChat extends Window {
 	}
 	
 	public void uimsg(String msg, Object... args) {
-		if(msg == "log") {
+		if(msg.equals("log")) {
                         Color col = null;
                         if(args.length > 1)
                                 col = (Color)args[1];
-			out.append((String)args[0], col);
-                } else if(msg == "btns") {
+			out.append((String) args[0], col);
+                } else if(msg.equals("btns")) {
                         if(btns != null) {
                                 for(Button b : btns)
                                         ui.destroy(b);

@@ -26,17 +26,10 @@
 
 package haven;
 
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.IdentityHashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.WeakHashMap;
 
 public class Layered extends Drawable {
     List<Indir<Resource>> layers;
@@ -89,7 +82,7 @@ public class Layered extends Drawable {
 
 	private synchronized void usecache(Object[] id) {
 	    for(Iterator<Object[]> i = recency.iterator(); i.hasNext();) {
-		Object[] cid = (Object[])i.next();
+		Object[] cid = i.next();
 		if(cid == id) {
 		    i.remove();
 		    recency.addFirst(id);

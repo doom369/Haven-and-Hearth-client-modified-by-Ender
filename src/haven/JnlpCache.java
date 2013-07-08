@@ -26,18 +26,13 @@
 
 package haven;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Method;
-import java.net.URL;
-
 import javax.jnlp.BasicService;
 import javax.jnlp.FileContents;
 import javax.jnlp.PersistenceService;
 import javax.jnlp.ServiceManager;
+import java.io.*;
+import java.lang.reflect.Method;
+import java.net.URL;
 
 public class JnlpCache implements ResCache {
     private PersistenceService back;
@@ -94,10 +89,10 @@ public class JnlpCache implements ResCache {
 		s.close();
 	    }
 	} catch(IOException e) {
-	    return;
+
 	} catch(Exception e) {
 	    /* There seems to be a strange bug in NetX. */
-	    return;
+
 	}
     }
     

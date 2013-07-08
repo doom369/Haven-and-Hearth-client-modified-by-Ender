@@ -26,26 +26,19 @@
 
 package haven;
 
-import static haven.MCache.cmaps;
-import static haven.MCache.tilesz;
+import ender.HLInfo;
 import haven.MCache.Grid;
 import haven.MCache.Overlay;
 import haven.Resource.Tile;
 
-import java.awt.Color;
+import java.awt.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
-import ender.HLInfo;
+import static haven.MCache.cmaps;
+import static haven.MCache.tilesz;
 
 public class MapView extends Widget implements DTarget, Console.Directory {
     static Color[] olc = new Color[31];
@@ -92,12 +85,6 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 	_scale = value;
 	mask.setScale(value);
     }
-
-    public static final Comparator<Sprite.Part> clickcmp = new Comparator<Sprite.Part>() {
-	public int compare(Sprite.Part a, Sprite.Part b) {
-	    return(-Sprite.partidcmp.compare(a, b));
-	}
-    };
     
     static {
 	Widget.addtype("mapview", new WidgetFactory() {
@@ -235,10 +222,7 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 	public OrigCam2(double v) {
 	    this.v = Math.log(v) / 0.02; /* 1 / 50 FPS = 0.02 s */
 	}
-	
-	public OrigCam2() {
-	    this(0.9);
-	}
+
 	
 	public OrigCam2(String... args) {
 	    this((args.length < 1)?0.9:Double.parseDouble(args[0]));
@@ -760,14 +744,14 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 		    radiuses.put("gfx/terobjs/bhived", plrad);
 	    }
 	    this.plob = plob;
-	} else if(msg == "unplace") {
+	} else if(msg.equals("unplace")) {
 	    if(plob != null)
 		glob.oc.lrem(plob);
 	    plob = null;
 	    plrad = 0;
-	} else if(msg == "polowner") {
+	} else if(msg.equals("polowner")) {
 	    String o = ((String)args[0]).intern();
-	    if(o != polowner) {
+	    if(!o.equals(polowner)) {
 		if(o.length() == 0) {
 		    if(this.polowner != null)
 			this.polownert = polownertf.render("Leaving " + this.polowner);
@@ -896,7 +880,7 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 	    g.chcolor(0, 255, 0, 32);
 	    synchronized (glob.oc) {
 		for (Gob tg : glob.oc)
-		    if ((tg.sc != null) && (tg.resname() == name))
+		    if ((tg.sc != null) && (tg.resname().equals(name)))
 			drawradius(g, tg.sc, plrad);
 	    }
 	    g.chcolor();

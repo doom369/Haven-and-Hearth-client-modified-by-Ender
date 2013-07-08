@@ -26,7 +26,7 @@
 
 package haven;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -80,11 +80,11 @@ public class Avaview extends Widget {
     }
 	
     public void uimsg(String msg, Object... args) {
-	if(msg == "upd") {
+	if(msg.equals("upd")) {
 	    this.avagob = (Integer)args[0];
 	    return;
 	}
-	if(msg == "ch") {
+	if(msg.equals("ch")) {
 	    List<Indir<Resource>> rl = new LinkedList<Indir<Resource>>();
 	    for(Object arg : args)
 		rl.add(ui.sess.getres((Integer)arg));

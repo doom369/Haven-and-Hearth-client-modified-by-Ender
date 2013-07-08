@@ -26,28 +26,13 @@
 
 package haven;
 
-import java.awt.Cursor;
-import java.awt.GraphicsConfiguration;
-import java.awt.Toolkit;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import javax.media.opengl.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
-
-import javax.media.opengl.GL;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLCanvas;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.GLException;
 
 public class HavenPanel extends GLCanvas implements Runnable {
     UI ui;
@@ -310,7 +295,7 @@ public class HavenPanel extends GLCanvas implements Runnable {
 	}
 	Resource curs = ui.root.getcurs(mousepos);
 	if(!curs.loading) {
-	    if(cursmode == "awt") {
+	    if(cursmode.equals("awt")) {
 		if(curs != lastcursor) {
 		    try {
 			setCursor(makeawtcurs(curs.layer(Resource.imgc).img, curs.layer(Resource.negc).cc));
@@ -319,7 +304,7 @@ public class HavenPanel extends GLCanvas implements Runnable {
 			cursmode = "tex";
 		    }
 		}
-	    } else if(cursmode == "tex") {
+	    } else if(cursmode.equals("tex")) {
 		Coord dc = mousepos.add(curs.layer(Resource.negc).cc.inv());
 		g.image(curs.layer(Resource.imgc), dc);
 	    }
@@ -416,8 +401,5 @@ public class HavenPanel extends GLCanvas implements Runnable {
 	    }
 	} catch(InterruptedException e) {}
     }
-	
-    public GraphicsConfiguration getconf() {
-	return(getGraphicsConfiguration());
-    }
+
 }

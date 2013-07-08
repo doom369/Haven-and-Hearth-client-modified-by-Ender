@@ -26,14 +26,14 @@
 
 package haven;
 
-import java.awt.Color;
+import ender.CurioInfo;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import ender.CurioInfo;
 
 public class Item extends Widget implements DTarget {
     static Coord shoff = new Coord(1, 3);
@@ -418,20 +418,20 @@ public class Item extends Widget implements DTarget {
     }
 
     public void uimsg(String name, Object... args)  {
-	if(name == "num") {
+	if(name.equals("num")) {
 	    num = (Integer)args[0];
-	} else if(name == "chres") {
+	} else if(name.equals("chres")) {
 	    chres(ui.sess.getres((Integer)args[0]), (Integer)args[1]);
 	    resettt();
-	} else if(name == "color") {
+	} else if(name.equals("color")) {
 	    olcol = (Color)args[0];
-	} else if(name == "tt") {
+	} else if(name.equals("tt")) {
 	    if((args.length > 0) && (((String)args[0]).length() > 0))
 		settip((String)args[0]);
 	    else
 		settip(null);
 	    resettt();
-	} else if(name == "meter") {
+	} else if(name.equals("meter")) {
 	    meter = (Integer)args[0];
 	    shorttip = null;
 	    longtip = null;

@@ -26,7 +26,7 @@
 
 package haven;
 
-import java.awt.Color;
+import java.awt.*;
 
 public class Label extends Widget {
     Text.Foundry f;
@@ -83,7 +83,8 @@ public class Label extends Widget {
     }
 	
     public void uimsg(String msg, Object... args) {
-	if(msg == "set")
-	    settext((String)args[0]);
+        if(msg.equals("set")) {
+            settext((String)args[0]);
+        }
     }
 }

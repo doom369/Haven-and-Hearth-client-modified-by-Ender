@@ -127,7 +127,7 @@ public class MiniMap extends Widget {
 		    String grid;
 		    synchronized(grids) {
 			grid = null;
-			for(String cg : loading) {
+			for (String cg : loading) {
 			    grid = cg;
 			    break;
 			}
@@ -413,7 +413,7 @@ public class MiniMap extends Widget {
 			c = gob.getc();
 			if(c == null){continue;}
 			String name = gob.resname();
-			if(name == null){continue;};
+			if(name == null){continue;}
 			c = c0.add(c.div(tilesz));
 
 			if(gob.isHighlight() && Config.highlightItemList.contains(name)){

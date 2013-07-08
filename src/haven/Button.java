@@ -26,8 +26,7 @@
 
 package haven;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Button extends Widget {
@@ -110,7 +109,7 @@ public class Button extends Widget {
     }
     
     public void uimsg(String msg, Object... args) {
-	if(msg == "ch") {
+	if(msg.equals("ch")) {
 	    if(args.length > 1)
 		change((String)args[0], (Color)args[1]);
 	    else

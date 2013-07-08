@@ -113,7 +113,7 @@ public class LineEdit {
 	}
 	
 	private void mode(String mode) {
-	    if((mode == "") || (last != mode))
+	    if((mode.equals("")) || (!last.equals(mode)))
 		save();
 	    last = mode;
 	}
@@ -136,7 +136,7 @@ public class LineEdit {
 		mode("backward-kill-word");
 		save();
 		int b = wordstart(point);
-		if(last == "backward-kill-word")
+		if(last.equals("backward-kill-word"))
 		    yanklist.set(yanklist.size() - 1, line.substring(b, point) + yanklist.get(yanklist.size() - 1));
 		else
 		    kill(line.substring(b, point));
@@ -152,7 +152,7 @@ public class LineEdit {
 		mode("kill-word");
 		save();
 		int b = wordend(point);
-		if(last == "kill-word")
+		if(last.equals("kill-word"))
 		    yanklist.set(yanklist.size() - 1, yanklist.get(yanklist.size() - 1) + line.substring(point, b));
 		else
 		    kill(line.substring(point, b));
@@ -220,7 +220,7 @@ public class LineEdit {
 	    } else if((c == 'y') && (mod == M)) {
 		mode("yank");
 		save();
-		if((last == "yank") && (yankpos > 0)) {
+		if((last.equals("yank")) && (yankpos > 0)) {
 		    String yank = yanklist.get(--yankpos);
 		    line = line.substring(0, mark) + yank + line.substring(point);
 		    point = mark + yank.length();
@@ -231,7 +231,7 @@ public class LineEdit {
 	    } else if((c == '_') && (mod == C)) {
 		mode("undo");
 		save();
-		if(last != "undo")
+		if(last.equals("undo"))
 		    undopos = undolist.size() - 1;
 		if(undopos > 0) {
 		    UndoState s = undolist.get(--undopos);
@@ -328,7 +328,7 @@ public class LineEdit {
     protected void changed() {}
     
     public Text render(Text.Foundry f) {
-	if((tcache == null) || (tcache.text != line))
+	if((tcache == null) || (!tcache.text.equals(line)))
 	    tcache = f.render(line);
 	return(tcache);
     }

@@ -26,15 +26,10 @@
 
 package haven;
 
-import java.awt.Color;
+import java.awt.*;
 import java.text.Collator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class BuddyWnd extends Window {
     public static BuddyWnd instance;
@@ -194,16 +189,16 @@ public class BuddyWnd extends Window {
 	}
 
 	public void uimsg(String msg, Object... args) {
-	    if(msg == "i-clear") {
+	    if(msg.equals("i-clear")) {
 		clear();
-	    } if(msg == "i-ava") {
+	    } if(msg.equals("i-ava")) {
 		List<Indir<Resource>> rl = new LinkedList<Indir<Resource>>();
 		for(Object o : args)
 		    rl.add(ui.sess.getres((Integer)o));
 		if(ava != null)
 		    ui.destroy(ava);
 		ava = new Avaview(new Coord((sz.x / 2) - 40, 10), this, rl);
-	    } else if(msg == "i-set") {
+	    } else if(msg.equals("i-set")) {
 		id = (Integer)args[0];
 		String name = (String)args[1];
 		int group = (Integer)args[2];
@@ -221,9 +216,9 @@ public class BuddyWnd extends Window {
 			    BuddyWnd.this.wdgmsg("grp", id, group);
 			}
 		    };
-	    } else if(msg == "i-atime") {
+	    } else if(msg.equals("i-atime")) {
 		setatime((Integer)args[0]);
-	    } else if(msg == "i-act") {
+	    } else if(msg.equals("i-act")) {
 		if(rmb != null)
 		    ui.destroy(rmb);
 		if(invb != null)
@@ -276,8 +271,8 @@ public class BuddyWnd extends Window {
 	}
 
 	public void wdgmsg(Widget sender, String msg, Object... args) {
-	    return;
 	}
+
     }
 
     private class BuddyList extends Widget {
@@ -441,7 +436,7 @@ public class BuddyWnd extends Window {
     }
     
     public void uimsg(String msg, Object... args) {
-	if(msg == "add") {
+	if(msg.equals("add")) {
 	    Buddy b = new Buddy();
 	    b.id = (Integer)args[0];
 	    b.name = Text.render(((String)args[1]));
@@ -453,7 +448,7 @@ public class BuddyWnd extends Window {
 		Collections.sort(buddies, bcmp);
 	    }
 	    bl.repop();
-	} else if(msg == "rm") {
+	} else if(msg.equals("rm")) {
 	    int id = (Integer)args[0];
 	    Buddy b;
 	    synchronized(buddies) {
@@ -465,7 +460,7 @@ public class BuddyWnd extends Window {
 	    }
 	    if(bi.id == id)
 		bi.clear();
-	} else if(msg == "chst") {
+	} else if(msg.equals("chst")) {
 	    int id = (Integer)args[0];
 	    int online = (Integer)args[1];
 	    synchronized(buddies) {
@@ -475,26 +470,26 @@ public class BuddyWnd extends Window {
 		ui.cons.out.println(str);
 		ui.slen.error(str);
 	    }
-	} else if(msg == "chnm") {
+	} else if(msg.equals("chnm")) {
 	    int id = (Integer)args[0];
 	    String name = (String)args[1];
 	    synchronized(buddies) {
 		idmap.get(id).name = Text.render(name);
 	    }
-	} else if(msg == "chgrp") {
+	} else if(msg.equals("chgrp")) {
 	    int id = (Integer)args[0];
 	    int group = (Integer)args[1];
 	    synchronized(buddies) {
 		idmap.get(id).group = group;
 	    }
-	} else if(msg == "sel") {
+	} else if(msg.equals("sel")) {
 	    int id = (Integer)args[0];
 	    Buddy tgt;
 	    synchronized(buddies) {
 		tgt = idmap.get(id);
 	    }
 	    bl.select(tgt);
-	} else if(msg == "pwd") {
+	} else if(msg.equals("pwd")) {
 	    charpass.settext((String)args[0]);
 	} else if(msg.substring(0, 2).equals("i-")) {
 	    bi.uimsg(msg, args);

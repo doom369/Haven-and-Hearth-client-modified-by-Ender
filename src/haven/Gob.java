@@ -26,16 +26,9 @@
 
 package haven;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.TreeMap;
 
 public class Gob implements Sprite.Owner {
     public Coord rc, sc;
@@ -100,10 +93,6 @@ public class Gob implements Sprite.Owner {
 	this(glob, c, 0, 0);
     }
 	
-    public static interface ANotif<T extends GAttrib> {
-	public void ch(T n);
-    }
-	
     public void ctick(int dt) {
 	int dt2 = dt + initdelay;
 	initdelay = 0;
@@ -135,7 +124,7 @@ public class Gob implements Sprite.Owner {
 	public Tex img;
 
 	public DmgInfo(int c, int value){
-	    this.col = new Color(dup((c & 0xF000) >> 12), dup((c & 0xF00) >> 8), dup((c & 0xF0) >> 4), dup((c & 0xF) >> 0));;
+	    this.col = new Color(dup((c & 0xF000) >> 12), dup((c & 0xF00) >> 8), dup((c & 0xF0) >> 4), dup((c & 0xF) >> 0));
 	    val = 0;
 	    update(value);
 	}
@@ -156,7 +145,7 @@ public class Gob implements Sprite.Owner {
 	if(res == null){return;}
 	Message msg = ol.sdt;
 	int off = msg.off;
-	if(res.name.indexOf("score")>=0){
+	if(res.name.indexOf("score") >= 0){
 	    int val = msg.int32();
 	    int j = msg.uint8();
 	    int col = msg.uint16();
@@ -236,10 +225,6 @@ public class Gob implements Sprite.Owner {
 	if(flw != null)
 	    ret = ret.add(flw.doff);
 	return(ret);
-    }
-    
-    public void checkhide(){
-	
     }
     
     public void drawsetup(Sprite.Drawer drawer, Coord dc, Coord sz) {

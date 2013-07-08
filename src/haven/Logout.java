@@ -43,9 +43,9 @@ public class Logout extends Window {
 	} else if(sender == n) {
 	    ui.destroy(this);
 	} else if(sender == this) {
-	    if(msg == "close")
+	    if(msg.equals("close"))
 		ui.destroy(this);
-	    if(msg == "activate")
+	    if(msg.equals("activate"))
 		ui.sess.close();
 	} else {
 	    super.wdgmsg(sender, msg, args);

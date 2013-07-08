@@ -26,7 +26,10 @@
 
 package haven;
 
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.SourceDataLine;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
@@ -257,24 +260,7 @@ public class Audio {
 		}
 	    });
     }
-    
-    public static byte[] readclip(InputStream in) throws java.io.IOException {
-	AudioInputStream cs;
-	try {
-	    cs = AudioSystem.getAudioInputStream(fmt, AudioSystem.getAudioInputStream(in));
-	} catch(UnsupportedAudioFileException e) {
-	    throw(new java.io.IOException("Unsupported audio encoding"));
-	}
-	java.io.ByteArrayOutputStream buf = new java.io.ByteArrayOutputStream();
-	byte[] bbuf = new byte[65536];
-	while(true) {
-	    int rv = cs.read(bbuf);
-	    if(rv < 0)
-		break;
-	    buf.write(bbuf, 0, rv);
-	}
-	return(buf.toByteArray());
-    }
+
     
     public static void main(String[] args) throws Exception {
 	Collection<DataClip> clips = new LinkedList<DataClip>();

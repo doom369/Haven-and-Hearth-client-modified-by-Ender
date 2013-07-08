@@ -28,7 +28,7 @@ package haven;
 
 import haven.Text.Foundry;
 
-import java.awt.Font;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -88,7 +88,7 @@ public class Equipory extends Window implements DTarget {
     }
 	
     public void uimsg(String msg, Object... args) {
-	if(msg == "set") {
+	if(msg.equals("set")) {
 	    synchronized(ui) {
 		int i = 0, o = 0;
 		while(i < equed.size()) {
@@ -107,17 +107,17 @@ public class Equipory extends Window implements DTarget {
 		}
 	    }
 	    calcAC();
-	} else if(msg == "setres") {
+	} else if(msg.equals("setres")) {
 	    int i = (Integer)args[0];
 	    Indir<Resource> res = ui.sess.getres((Integer)args[1]);
 	    equed.get(i).chres(res, (Integer)args[2]);
 	    calcAC();
-	} else if(msg == "settt") {
+	} else if(msg.equals("settt")) {
 	    int i = (Integer)args[0];
 	    String tt = (String)args[1];
 	    equed.get(i).settip(tt);
 	    calcAC();
-	} else if(msg == "ava") {
+	} else if(msg.equals("ava")) {
 	    avagob = (Integer)args[0];
 	}
     }
@@ -148,21 +148,21 @@ public class Equipory extends Window implements DTarget {
     public void wdgmsg(Widget sender, String msg, Object... args) {
 	int ep;
 	if((ep = epoints.indexOf(sender)) != -1) {
-	    if(msg == "drop") {
+	    if(msg.equals("drop")) {
 		wdgmsg("drop", ep);
 		return;
-	    } else if(msg == "xfer") {
+	    } else if(msg.equals("xfer")) {
 		return;
 	    }
 	}
 	if((ep = equed.indexOf(sender)) != -1) {
-	    if(msg == "take")
+	    if(msg.equals("take"))
 		wdgmsg("take", ep, args[0]);
-	    else if(msg == "itemact")
+	    else if(msg.equals("itemact"))
 		wdgmsg("itemact", ep);
-	    else if(msg == "transfer")
+	    else if(msg.equals("transfer"))
 		wdgmsg("transfer", ep, args[0]);
-	    else if(msg == "iact")
+	    else if(msg.equals("iact"))
 		wdgmsg("iact", ep, args[0]);
 	    return;
 	}
