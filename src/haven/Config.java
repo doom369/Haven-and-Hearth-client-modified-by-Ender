@@ -378,7 +378,9 @@ public class Config {
 	    }
 	    br.close();
 	    fstream.close();
-	} catch (Exception e) {}
+	} catch (Exception e) {
+	    System.out.println("Failed to load curios");
+	}
     }
 
     private static void loadFEP() {
