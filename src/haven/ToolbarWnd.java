@@ -2,7 +2,7 @@ package haven;
 
 import haven.Resource.Image;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
@@ -166,7 +166,7 @@ public class ToolbarWnd extends Window implements DTarget, DropTarget {
 	    for (int slot = 0; slot < layout.length; slot++) {
 		String icon = beltsConfig.getProperty("belt_" + belt + "_" + slot, "");
 		if (icon.length() > 0) {
-		    layout[slot] = new Slot(icon, belt, slot);
+		    layout[slot] = new Slot(icon);
 		} else {
 		    layout[slot] = null;
 		}
@@ -411,7 +411,7 @@ public class ToolbarWnd extends Window implements DTarget, DropTarget {
 		int slot = index(cc);
 		if(slot >= 0){
 		    String val = "@"+s;
-		    layout[slot] = new Slot(val, belt, slot);
+		    layout[slot] = new Slot(val);
 		    ui.slen.wdgmsg("setbelt", s, 0);
 		    setbeltslot(belt, slot, val);
 		}
@@ -430,7 +430,7 @@ public class ToolbarWnd extends Window implements DTarget, DropTarget {
 	    if(slot < 0){return false;}
 	    Resource res = (Resource)thing;
 	    setBeltSlot(slot, res.name);
-	    layout[slot] = new Slot(res.name, belt, slot );
+	    layout[slot] = new Slot(res.name);
 	    return true;
 	}
 	return false;
@@ -479,7 +479,7 @@ public class ToolbarWnd extends Window implements DTarget, DropTarget {
 	return(ttfnd.render(tt, 0));
     }
     
-    private boolean checkKey(char ch, KeyEvent ev) {
+    private boolean checkKey(KeyEvent ev) {
 	if(!visible){return false;}
 	int code = ev.getKeyCode();
 	int slot = code - key;
@@ -510,7 +510,7 @@ public class ToolbarWnd extends Window implements DTarget, DropTarget {
     }
     
     public boolean globtype(char ch, KeyEvent ev) {
-	if(!checkKey(ch, ev))
+	if(!checkKey(ev))
 	    return(super.globtype(ch, ev));
 	else
 	    return true;
@@ -521,7 +521,7 @@ public class ToolbarWnd extends Window implements DTarget, DropTarget {
 	    wdgmsg(fbtn, "click");
 	    return(true);
 	}
-	if(!checkKey(key, ev))
+	if(!checkKey(ev))
 	    return(super.type(key, ev));
 	else
 	    return true;
@@ -579,11 +579,8 @@ public class ToolbarWnd extends Window implements DTarget, DropTarget {
 	public String action;
 	public int slot;
 	private Resource res;
-	private int belt, ind;
-	
-	public Slot(String str, int belt, int ind){
-	    this.ind = ind;
-	    this.belt = belt;
+
+	public Slot(String str){
 	    if(str.charAt(0) == '@'){
 		isitem = true;
 		slot = Integer.decode(str.substring(1));

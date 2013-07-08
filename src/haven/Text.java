@@ -26,12 +26,8 @@
 
 package haven;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
 public class Text {
     public static final Foundry std;
@@ -74,19 +70,6 @@ public class Text {
 		}
 	    }
 	}
-    }
-
-    public static int[] findspaces(String text) {
-	java.util.List<Integer> l = new ArrayList<Integer>();
-	for(int i = 0; i < text.length(); i++) {
-	    char c = text.charAt(i);
-	    if(Character.isWhitespace(c))
-		l.add(i);
-	}
-	int[] ret = new int[l.size()];
-	for(int i = 0; i < ret.length; i++)
-	    ret[i] = l.get(i);
-	return(ret);
     }
         
     public static class Foundry {
@@ -191,7 +174,7 @@ public class Text {
     
     public static void main(String[] args) throws Exception {
 	String cmd = args[0].intern();
-	if(cmd == "render") {
+	if(cmd.equals("render")) {
 	    PosixArgs opt = PosixArgs.getopt(args, 1, "aw:f:s:");
 	    boolean aa = false;
 	    String font = "SansSerif";

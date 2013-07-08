@@ -66,7 +66,6 @@ public class Utils {
 			    q.wait();
 		    }
 		    cur.run();
-		    cur = null;
 		}
 	    } catch(InterruptedException e) {}
 	}
@@ -91,8 +90,7 @@ public class Utils {
 	Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
 	try {
 	    if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-		String text = (String)t.getTransferData(DataFlavor.stringFlavor);
-		return text;
+		return (String)t.getTransferData(DataFlavor.stringFlavor);
 	    }
 	} catch (UnsupportedFlavorException e) {
 	} catch (IOException e) {
@@ -291,12 +289,12 @@ public class Utils {
 	int i = 0;
 	while(i < text.length()) {
 	    char c = text.charAt(i);
-	    if(st == "ws") {
+	    if(st.equals("ws")) {
 		if(!Character.isWhitespace(c))
 		    st = "word";
 		else
 		    i++;
-	    } else if(st == "word") {
+	    } else if(st.equals("word")) {
 		if(c == '"') {
 		    st = "quote";
 		    i++;
@@ -311,7 +309,7 @@ public class Utils {
 		    buf.append(c);
 		    i++;
 		}
-	    } else if(st == "quote") {
+	    } else if(st.equals("quote")) {
 		if(c == '"') {
 		    st = "word";
 		    i++;
@@ -322,37 +320,23 @@ public class Utils {
 		    buf.append(c);
 		    i++;
 		}
-	    } else if(st == "squote") {
+	    } else if(st.equals("squote")) {
 		buf.append(c);
 		i++;
 		st = "word";
-	    } else if(st == "sqquote") {
+	    } else if(st.equals("sqquote")) {
 		buf.append(c);
 		i++;
 		st = "quote";
 	    }
 	}
-	if(st == "word")
+	if(st.equals("word"))
 	    words.add(buf.toString());
-	if((st != "ws") && (st != "word"))
+	if((!st.equals("ws")) && (!st.equals("word")))
 	    return(null);
 	return(words.toArray(new String[0]));
     }
-	
-    public static String[] splitlines(String text) {
-	ArrayList<String> ret = new ArrayList<String>();
-	int p = 0;
-	while(true) {
-	    int p2 = text.indexOf('\n', p);
-	    if(p2 < 0) {
-		ret.add(text.substring(p));
-		break;
-	    }
-	    ret.add(text.substring(p, p2));
-	    p = p2 + 1;
-	}
-	return(ret.toArray(new String[0]));
-    }
+
 
     static int atoi(String a) {
 	try {
@@ -501,39 +485,6 @@ public class Utils {
 	g.drawImage(img, 1, 1, null);
 	g.dispose();
 	return(ol);
-    }
-
-    public static int floordiv(int a, int b) {
-	if(a < 0)
-	    return(((a + 1) / b) - 1);
-	else
-	    return(a / b);
-    }
-    
-    public static int floormod(int a, int b) {
-	int r = a % b;
-	if(r < 0)
-	    r += b;
-	return(r);
-    }
-
-    public static int floordiv(float a, float b) {
-	return((int)Math.floor(a / b));
-    }
-    
-    public static float floormod(float a, float b) {
-	float r = a % b;
-	if(r < 0)
-	    r += b;
-	return(r);
-    }
-
-    public static double clip(double d, double min, double max) {
-	if(d < min)
-	    return(min);
-	if(d > max)
-	    return(max);
-	return(d);
     }
     
     public static int clip(int i, int min, int max) {

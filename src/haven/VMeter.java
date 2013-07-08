@@ -26,7 +26,7 @@
 
 package haven;
 
-import java.awt.Color;
+import java.awt.*;
 
 public class VMeter extends Widget {
     static Tex bg = Resource.loadtex("gfx/hud/vm-frame");
@@ -68,7 +68,7 @@ public class VMeter extends Widget {
     }
 	
     public void uimsg(String msg, Object... args) {
-	if(msg == "set") {
+	if(msg.equals("set")) {
 	    amount = (Integer)args[0];
 	} else {
 	    super.uimsg(msg, args);

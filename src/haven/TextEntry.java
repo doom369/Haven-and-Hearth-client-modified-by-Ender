@@ -26,8 +26,7 @@
 
 package haven;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class TextEntry extends Widget {
@@ -52,11 +51,11 @@ public class TextEntry extends Widget {
     }
 	
     public void uimsg(String name, Object... args) {
-	if(name == "settext") {
+	if(name.equals("settext")) {
 	    settext((String)args[0]);
-	} else if(name == "get") {
+	} else if(name.equals("get")) {
 	    wdgmsg("text", buf.line);
-	} else if(name == "pw") {
+	} else if(name.equals("pw")) {
 	    pw = ((Integer)args[0]) == 1;
 	} else {
 	    super.uimsg(name, args);

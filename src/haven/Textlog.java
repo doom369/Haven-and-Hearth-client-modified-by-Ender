@@ -26,7 +26,7 @@
 
 package haven;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.font.TextAttribute;
 import java.util.LinkedList;
 import java.util.List;
@@ -117,7 +117,7 @@ public class Textlog extends Widget {
     }
 	
     public void uimsg(String msg, Object... args) {
-	if(msg == "apnd") {
+	if(msg.equals("apnd")) {
 	    append((String)args[0]);
 	}
     }

@@ -59,13 +59,7 @@ public class StreamTee extends InputStream {
     public void setncwe() {
 	ncwe = true;
     }
-    
-    public void flush() throws IOException {
-	synchronized(forked) {
-	    for(OutputStream s : forked)
-		s.flush();
-	}
-    }
+
     
     public void mark(int limit) {}
     
