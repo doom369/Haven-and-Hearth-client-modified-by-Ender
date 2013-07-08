@@ -26,31 +26,17 @@
 
 package haven;
 
+import javax.net.ssl.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.UnrecoverableKeyException;
+import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManagerFactory;
 
 public class SslHelper {
     private KeyStore creds, trusted;
@@ -128,19 +114,6 @@ public class SslHelper {
 	return(fac.generateCertificate(in));
     }
     
-    public synchronized void loadCredsPkcs12(InputStream in, char[] pw) throws IOException, CertificateException {
-	clear();
-	try {
-	    creds = KeyStore.getInstance("PKCS12");
-	    creds.load(in, pw);
-	    this.pw = pw;
-	} catch(KeyStoreException e) {
-	    throw(new Error(e));
-	} catch(NoSuchAlgorithmException e) {
-	    throw(new Error(e));
-	}
-    }
-    
     public HttpsURLConnection connect(URL url) throws IOException {
 	if(!url.getProtocol().equals("https"))
 	    throw(new MalformedURLException("Can only be used to connect to HTTPS servers"));
@@ -168,12 +141,9 @@ public class SslHelper {
     }
     
     public SSLSocket connect(String host, int port) throws IOException {
-	Socket sk = new HackSocket();
+	Socket sk = new Socket();
 	sk.connect(new InetSocketAddress(host, port));
 	return(connect(sk, host, port, true));
     }
-    
-    public boolean hasCreds() {
-	return(creds != null);
-    }
+
 }
