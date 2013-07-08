@@ -196,7 +196,7 @@ public class HavenApplet extends Applet {
 		public void show(URL url) {
 		    HavenApplet a;
 		    synchronized(applets) {
-			a = applets.get(HackThread.tg());
+			a = applets.get(Thread.currentThread().getThreadGroup());
 		    }
 		    if(a != null)
 			a.getAppletContext().showDocument(url);

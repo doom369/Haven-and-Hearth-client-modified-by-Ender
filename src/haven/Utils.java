@@ -123,24 +123,6 @@ public class Utils {
 	}
     }
 	
-    public static int drawtext(Graphics g, String text, Coord c) {
-	java.awt.FontMetrics m = g.getFontMetrics();
-	g.drawString(text, c.x, c.y + m.getAscent());
-	return(m.getHeight());
-    }
-	
-    static Coord textsz(Graphics g, String text) {
-	java.awt.FontMetrics m = g.getFontMetrics();
-	java.awt.geom.Rectangle2D ts = m.getStringBounds(text, g);
-	return(new Coord((int)ts.getWidth(), (int)ts.getHeight()));
-    }
-	
-    static void aligntext(Graphics g, String text, Coord c, double ax, double ay) {
-	java.awt.FontMetrics m = g.getFontMetrics();
-	java.awt.geom.Rectangle2D ts = m.getStringBounds(text, g);
-	g.drawString(text, (int)(c.x - ts.getWidth() * ax), (int)(c.y + m.getAscent() - ts.getHeight() * ay));
-    }
-	
     static void line(Graphics g, Coord c1, Coord c2) {
 	g.drawLine(c1.x, c1.y, c2.x, c2.y);
     }

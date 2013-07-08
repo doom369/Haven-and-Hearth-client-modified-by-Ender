@@ -1,13 +1,12 @@
 package haven;
 
 import haven.RichText.Foundry;
-
-import java.awt.Color;
-import java.awt.font.TextAttribute;
-
 import wikilib.Request;
 import wikilib.RequestCallback;
 import wikilib.WikiLib;
+
+import java.awt.*;
+import java.awt.font.TextAttribute;
 
 public class WikiPage extends HWindow {
     private static final Foundry fnd = new Foundry(TextAttribute.FOREGROUND, Color.BLACK,TextAttribute.SIZE,12);
@@ -92,6 +91,6 @@ public class WikiPage extends HWindow {
     public void destroy() {
 	super.destroy();
 	callback = null;
-	reader = null;;
+	reader = null;
     }
 }
