@@ -26,7 +26,7 @@
 
 package haven;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Message implements java.io.Serializable {
@@ -147,7 +147,7 @@ public class Message implements java.io.Serializable {
 	for(Object o : args) {
 	    if(o instanceof Integer) {
 		adduint8(T_INT);
-		addint32(((Integer)o).intValue());
+		addint32((Integer) o);
 	    } else if(o instanceof String) {
 		adduint8(T_STR);
 		addstring((String)o);

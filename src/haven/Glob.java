@@ -26,14 +26,9 @@
 
 package haven;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Observable;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
 import ender.timer.Timer;
+
+import java.util.*;
 
 public class Glob {
     public static final int GMSG_TIME = 0;
@@ -113,7 +108,7 @@ public class Glob {
 	while(!msg.eom()) {
 	    switch(msg.uint8()) {
 	    case GMSG_TIME:
-		Timer.server = msg.int32();;
+		Timer.server = msg.int32();
 		Timer.local = System.currentTimeMillis()/1000;
 		break;
 	    case GMSG_ASTRO:
@@ -175,9 +170,9 @@ public class Glob {
     public void buffmsg(Message msg) {
 	String name = msg.string().intern();
 	synchronized(buffs) {
-	    if(name == "clear") {
+	    if(name.equals("clear")) {
 		buffs.clear();
-	    } else if(name == "set") {
+	    } else if(name.equals("set")) {
 		int id = msg.int32();
 		Indir<Resource> res = sess.getres(msg.uint16());
 		String tt = msg.string();
@@ -204,7 +199,7 @@ public class Glob {
 		buff.major = major;
 		buff.gettime = System.currentTimeMillis();
 		buffs.put(id, buff);
-	    } else if(name == "rm") {
+	    } else if(name.equals("rm")) {
 		int id = msg.int32();
 		buffs.remove(id);
 	    }

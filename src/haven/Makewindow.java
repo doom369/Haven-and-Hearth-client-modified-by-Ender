@@ -26,7 +26,7 @@
 
 package haven;
 
-import java.awt.Font;
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,7 +34,6 @@ public class Makewindow extends HWindow {
     Widget obtn, cbtn;
     List<Widget> inputs;
     List<Widget> outputs;
-    static Coord boff = new Coord(7, 9);
     public static final Text.Foundry nmf = new Text.Foundry(new Font("Serif", Font.PLAIN, 20));
 
     static {
@@ -56,7 +55,7 @@ public class Makewindow extends HWindow {
     }
 	
     public void uimsg(String msg, Object... args) {
-	if(msg == "pop") {
+	if(msg.equals("pop")) {
 	    final int xoff = 50;
 	    if(inputs != null) {
 		for(Widget w : inputs)
@@ -86,12 +85,12 @@ public class Makewindow extends HWindow {
 	
     public void wdgmsg(Widget sender, String msg, Object... args) {
 	if(sender == obtn) {
-	    if(msg == "activate")
+	    if(msg.equals("activate"))
 		wdgmsg("make", 0);
 	    return;
 	}
 	if(sender == cbtn) {
-	    if(msg == "activate")
+	    if(msg.equals("activate"))
 		wdgmsg("make", 1);
 	    return;
 	}

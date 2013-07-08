@@ -100,7 +100,7 @@ public class ISBox extends Widget implements DTarget {
     }
     
     public void uimsg(String msg, Object... args) {
-        if(msg == "chnum") {
+        if(msg.equals("chnum")) {
             setlabel((Integer)args[0], (Integer)args[1], (Integer)args[2]);
         } else {
             super.uimsg(msg, args);

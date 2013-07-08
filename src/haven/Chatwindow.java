@@ -31,16 +31,16 @@ public class Chatwindow extends ChatHW {
     static {
 	Widget.addtype("chat", new WidgetFactory() {
 		public Widget create(Coord c, Widget parent, Object[] args) {
-		    return(new Chatwindow(c, (Coord)args[0], parent));
+		    return(new Chatwindow(parent));
 		}
 	    });
     }
 	
-    public Chatwindow(Coord c, Coord sz, Widget parent) {
+    public Chatwindow(Widget parent) {
 	super(parent,"Global",true);
     }
     public void uimsg(String msg, Object... args) {
-	if(msg == "log") {
+	if(msg.equals("log")) {
 	    makeurgent(1);
 	} 
 	super.uimsg(msg, args);

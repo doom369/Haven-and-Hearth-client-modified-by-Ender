@@ -26,10 +26,9 @@
 
 package haven;
 
-import static java.lang.Math.PI;
+import java.awt.*;
 
-import java.awt.Color;
-import java.awt.Font;
+import static java.lang.Math.PI;
 
 public class FlowerMenu extends Widget {
     public static Color pink = new Color(255, 0, 128);
@@ -167,9 +166,9 @@ public class FlowerMenu extends Widget {
     }
 	
     private static void organize(Petal[] opts) {
-	int l = 1, p = 0, i = 0;
+	int l = 1, p = 0;
 	int lr = -1;
-	for(i = 0; i < opts.length; i++) {
+	for(int i = 0; i < opts.length; i++) {
 	    if(lr == -1) {
 		//lr = (int)(ph / (1 - Math.cos((2 * PI) / (ppl * l))));
 		lr = 75 + (50 * (l - 1));
@@ -206,11 +205,11 @@ public class FlowerMenu extends Widget {
     }
 	
     public void uimsg(String msg, Object... args) {
-	if(msg == "cancel") {
+	if(msg.equals("cancel")) {
 	    anim = new Cancel();
 	    ui.grabmouse(null);
 	    ui.grabkeys(null);
-	} else if(msg == "act") {
+	} else if(msg.equals("act")) {
 	    anim = new Chosen(opts[(Integer)args[0]]);
 	    ui.grabmouse(null);
 	    ui.grabkeys(null);

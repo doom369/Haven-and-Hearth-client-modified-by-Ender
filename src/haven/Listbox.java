@@ -26,7 +26,7 @@
 
 package haven;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 import java.util.List;
@@ -78,18 +78,7 @@ public class Listbox extends Widget {
 	chosen = 0;
 	setcanfocus(true);
     }
-	
-    static List<Option> makelist(Option[] opts) {
-	List<Option> ol = new LinkedList<Option>();
-	for(Option o : opts)
-	    ol.add(o);
-	return(ol);
-    }
-	
-    public Listbox(Coord c, Coord sz, Widget parent, Option[] opts) {
-	this(c, sz, parent, makelist(opts));
-    }
-	
+
     public void sendchosen() {
 	wdgmsg("chose", opts.get(chosen).name);
     }

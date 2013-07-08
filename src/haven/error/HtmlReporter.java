@@ -26,29 +26,11 @@
 
 package haven.error;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -167,7 +149,7 @@ public class HtmlReporter {
 	buf.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n");
 	buf.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en-US\">\n");
 	buf.append("<head>\n");
-	buf.append("<title>" + title + "</title>\n");
+	buf.append("<title>").append(title).append("</title>\n");
 	buf.append("<link rel=\"stylesheet\" title=\"Haven error report\" type=\"text/css\" href=\"base.css\" />");
 	buf.append("</head>\n");
 	buf.append("<body>\n");
@@ -254,9 +236,9 @@ public class HtmlReporter {
 	    Object val = rep.props.get(key);
 	    String vals;
 	    if(val instanceof Number) {
-		vals = ifmt.format((Number)val);
+		vals = ifmt.format(val);
 	    } else if(val instanceof Date) {
-		vals = dfmt.format((Number)val);
+		vals = dfmt.format(val);
 	    } else if(val == null) {
 		vals = "(null)";
 	    } else {
@@ -295,9 +277,8 @@ public class HtmlReporter {
 	out.println("<h1>Error Index</h1>");
 	
 	Set<String> props = new TreeSet<String>();
-	for(String pn : idxprops)
-	    props.add(pn);
-	
+    props.addAll(Arrays.asList(idxprops));
+
 	Map<ErrorIdentity, List<Map.Entry<File, Report>>> groups = new TreeMap<ErrorIdentity, List<Map.Entry<File, Report>>>();
 	for(Map.Entry<File, Report> rent : reports.entrySet()) {
 	    ErrorIdentity id = new ErrorIdentity(rent.getValue());

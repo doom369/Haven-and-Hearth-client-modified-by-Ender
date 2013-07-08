@@ -28,21 +28,11 @@ package haven;
 
 import haven.Text.Foundry;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.TreeMap;
 
 public class CharWnd extends Window {
     public static CharWnd instance;
@@ -180,7 +170,7 @@ public class CharWnd extends Window {
 	
 	public void update() {
 	    lbl.settext(Integer.toString(attr.comp));
-	    if((nm == "intel") && study != null){
+	    if((nm.equals("intel")) && study != null){
 		study.setattnlimit(attr.comp);
 	    }
 	    if(attr.comp < attr.base) {
@@ -874,14 +864,14 @@ public class CharWnd extends Window {
     }
     
     public void uimsg(String msg, Object... args) {
-	if(msg == "exp") {
+	if(msg.equals("exp")) {
 	    exp = (Integer)args[0];
 	    updexp();
-	} else if(msg == "studynum") {
+	} else if(msg.equals("studynum")) {
 	    study.setattnused((Integer)args[0]);
-	} else if(msg == "reset") {
+	} else if(msg.equals("reset")) {
 	    updexp();
-	} else if(msg == "nsk") {
+	} else if(msg.equals("nsk")) {
 	    Collection<Resource> skl = new LinkedList<Resource>();
 	    for(int i = 0; i < args.length; i += 2) {
 		Resource res = Resource.load("gfx/hud/skills/" + (String)args[i]);
@@ -892,25 +882,25 @@ public class CharWnd extends Window {
 		}
 	    }
 	    nsk.pop(skl);
-	} else if(msg == "psk") {
+	} else if(msg.equals("psk")) {
 	    Collection<Resource> skl = new LinkedList<Resource>();
 	    for(int i = 0; i < args.length; i++) {
 		Resource res = Resource.load("gfx/hud/skills/" + (String)args[i]);
 		skl.add(res);
 	    }
 	    psk.pop(skl);
-	} else if(msg == "food") {
+	} else if(msg.equals("food")) {
 	    foodm.update(args);
-	} else if(msg == "btime") {
+	} else if(msg.equals("btime")) {
 	    btime = (Integer)args[0];
-	} else if(msg == "wish") {
+	} else if(msg.equals("wish")) {
 	    int ent = (Integer)args[0];
 	    int wish = (Integer)args[1];
 	    int resid = (Integer)args[2];
 	    int amount = (Integer)args[3];
 	    if(ent == 0)
 		ancw.wish(wish, ui.sess.getres(resid), amount);
-	} else if(msg == "numen") {
+	} else if(msg.equals("numen")) {
 	    int ent = (Integer)args[0];
 	    int numen = (Integer)args[1];
 	    if(ent == 0)

@@ -76,7 +76,7 @@ public class GiveButton extends Widget {
     }
     
     public void uimsg(String name, Object... args) {
-	if(name == "ch") {
+	if(name.equals("ch")) {
 	    this.state = (Integer)args[0];
 	} else {
 	    super.uimsg(name, args);

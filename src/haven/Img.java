@@ -61,7 +61,7 @@ public class Img extends Widget {
     }
 	
     public void uimsg(String name, Object... args) {
-	if(name == "ch") {
+	if(name.equals("ch")) {
 	    img = Resource.loadtex((String)args[0]);
 	}
     }

@@ -135,7 +135,7 @@ public class Charlist extends Widget {
     }
 
     public void uimsg(String msg, Object... args) {
-	if(msg == "add") {
+	if(msg.equals("add")) {
 	    Char c = new Char((String)args[0]);
 	    List<Indir<Resource>> resl = new LinkedList<Indir<Resource>>();
 	    for(int i = 1; i < args.length; i++)

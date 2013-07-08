@@ -26,9 +26,7 @@
 
 package haven;
 
-import haven.Gob.DmgInfo;
-
-import java.awt.Color;
+import java.awt.*;
 import java.util.LinkedList;
 
 public class Fightview extends Widget {
@@ -118,13 +116,13 @@ public class Fightview extends Widget {
 	SlenHud s = ui.slen;
 	curgive = new GiveButton(cgivec, ui.root, 0) {
 		public void wdgmsg(String name, Object... args) {
-		    if(name == "click")
+		    if(name.equals("click"))
 			Fightview.this.wdgmsg("give", current.gobid, args[0]);
 		}
 	    };
 	curava = new Avaview(cavac, ui.root, -1) {
 		public void wdgmsg(String name, Object... args) {
-		    if(name == "click")
+		    if(name.equals("click"))
 			Fightview.this.wdgmsg("click", current.gobid, args[0]);
 		}
 	    };
@@ -166,24 +164,14 @@ public class Fightview extends Widget {
 		g.image(name, new Coord(65, y-2));
 	    }
 	    String str = String.format("$img[gfx/hud/combat/bal]%d/%d $img[gfx/hud/combat/ip]%d/%d\n",rel.bal, rel.intns, rel.ip, rel.oip);
-	    str += "$img[gfx/hud/combat/off]"+((int)rel.off/100);
-	    str += " $img[gfx/hud/combat/def]"+((int)rel.def/100);
+	    str += "$img[gfx/hud/combat/off]"+(rel.off/100);
+	    str += " $img[gfx/hud/combat/def]"+(rel.def/100);
 	    Tex text = RichText.render(str, 0).tex();
 	    g.image(text, new Coord(65, y + 11));
 	    text.dispose();
-            //g.text(String.format("%d %d %d/%d", rel.bal, rel.intns, new Coord(65, y + 10));
             y += bg.sz().y + ymarg;
         }
         super.draw(g);
-        //draw DMG over cur ava
-//        Gob gob = ui.sess.glob.oc.getgob(current.gobid);
-//        if(gob != null){
-//            Coord cc = curava.c.add(3, curava.sz.y-3).sub(c);
-//            for(DmgInfo i:gob.dmgmap.values()){
-//        	g.aimage(i.img, cc, 0, 1);
-//        	cc.y -= i.img.sz().y +2;
-//            }
-//        }
         
     }
     
@@ -231,7 +219,7 @@ public class Fightview extends Widget {
 
     public void uimsg(String msg, Object... args) {
 	changed = System.currentTimeMillis();
-        if(msg == "new") {
+        if(msg.equals("new")) {
             Relation rel = new Relation((Integer)args[0]);
             rel.ava.showname = false;
             rel.bal = (Integer)args[1];
@@ -243,12 +231,12 @@ public class Fightview extends Widget {
             rel.def = (Integer)args[7];
             lsrel.addFirst(rel);
             return;
-        } else if(msg == "del") {
+        } else if(msg.equals("del")) {
             Relation rel = getrel((Integer)args[0]);
 	    rel.remove();
             lsrel.remove(rel);
             return;
-        } else if(msg == "upd") {
+        } else if(msg.equals("upd")) {
             Relation rel = getrel((Integer)args[0]);
             rel.bal = (Integer)args[1];
             rel.intns = (Integer)args[2];
@@ -256,12 +244,12 @@ public class Fightview extends Widget {
 	    rel.ip = (Integer)args[4];
 	    rel.oip = (Integer)args[5];
             return;
-	} else if(msg == "updod") {
+	} else if(msg.equals("updod")) {
 	    Relation rel = getrel((Integer)args[0]);
 	    rel.off = (Integer)args[1];
 	    rel.def = (Integer)args[2];
 	    return;
-        } else if(msg == "cur") {
+        } else if(msg.equals("cur")) {
             try {
                 Relation rel = getrel((Integer)args[0]);
                 lsrel.remove(rel);
@@ -274,21 +262,21 @@ public class Fightview extends Widget {
 		current = null;
 	    }
             return;
-        } else if(msg == "atkc") {
+        } else if(msg.equals("atkc")) {
 	    long now = System.currentTimeMillis();
 	    atkc = now + (((Integer)args[0]) * 60);
 	    if(atks == -1)
 		atks = now;
 	    atkcc = atkc-atks;
 	    return;
-	} else if(msg == "blk") {
+	} else if(msg.equals("blk")) {
 	    blk = n2r((Integer)args[0]);
 	    return;
-	} else if(msg == "atk") {
+	} else if(msg.equals("atk")) {
 	    batk = n2r((Integer)args[0]);
 	    iatk = n2r((Integer)args[1]);
 	    return;
-        } else if(msg == "offdef") {
+        } else if(msg.equals("offdef")) {
 	    off = (Integer)args[0];
 	    def = (Integer)args[1];
 	    return;

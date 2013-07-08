@@ -28,21 +28,13 @@ package haven;
 
 import haven.Party.Member;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 public class Partyview extends Widget {
     int ign;
     Party party = ui.sess.glob.party;
     Map<Integer, Member> om = null;
-    Member ol = null;
     Map<Member, Avaview> avs = new HashMap<Member, Avaview>();
     Button leave = null;
 	

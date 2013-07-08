@@ -1,7 +1,6 @@
 package haven;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -154,7 +153,7 @@ public class ChatHWPanel extends Widget implements IHWindowParent {
 		    : SlenHud.urgcols[w.urgent]);
 	    b.visible = true;
 	    b.sz.x = bw;
-	    b.c = btnc.add(bw * (i % k), ((int) i / k) * 20);
+	    b.c = btnc.add(bw * (i % k), (i / k) * 20);
 	}
     }
 
