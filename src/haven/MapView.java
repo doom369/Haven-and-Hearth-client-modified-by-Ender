@@ -1,7 +1,7 @@
 /*
  *  This file is part of the Haven & Hearth game client.
  *  Copyright (C) 2009 Fredrik Tolf <fredrik@dolda2000.com>, and
- *                     BjÃ¶rn Johannessen <johannessen.bjorn@gmail.com>
+ *                     Björn Johannessen <johannessen.bjorn@gmail.com>
  *
  *  Redistribution and/or modification of this file is subject to the
  *  terms of the GNU Lesser General Public License, version 3, as
@@ -48,6 +48,7 @@ import java.util.TreeMap;
 import ender.HLInfo;
 
 public class MapView extends Widget implements DTarget, Console.Directory {
+    static int alpha = 255;
     static Color[] olc = new Color[31];
     static Map<String, Class<? extends Camera>> camtypes = new HashMap<String, Class<? extends Camera>>();
     public Coord mc, mousepos, pmousepos;
@@ -65,6 +66,7 @@ public class MapView extends Widget implements DTarget, Console.Directory {
     boolean plontile;
     int plrad = 0;
     int playergob = -1;
+    boolean paload = false;
     public Profile prof = new Profile(300);
     private Profile.Frame curf;
     Coord plfpos = null;
@@ -83,6 +85,9 @@ public class MapView extends Widget implements DTarget, Console.Directory {
     Map<String, Integer> radiuses;
     int beast_check_delay = 0;
 	long lastah = 0;
+	final static int ONE_TILE = 11;
+	int north = 0,east = 0;
+	boolean ready = false;
     
     public double getScale() {
         return Config.zoom?_scale:1;
@@ -90,7 +95,8 @@ public class MapView extends Widget implements DTarget, Console.Directory {
     
     public void setScale(double value) {
 	_scale = value;
-	mask.setScale(value);
+	//mask.dispose();
+	//mask = new ILM(MainFrame.getScreenSize().div(_scale), glob.oc);
     }
 
     public static final Comparator<Sprite.Part> clickcmp = new Comparator<Sprite.Part>() {
@@ -529,13 +535,35 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 	this.mc = mc;
 	this.playergob = playergob;
 	this.cam = restorecam();
+	Config.loadPA();
 	setcanfocus(true);
 	glob = ui.sess.glob;
 	map = glob.map;
 	mask = new ILM(MainFrame.getScreenSize(), glob.oc);
 	radiuses = new HashMap<String, Integer>();
+	initd();
     }
     
+	public void initd(){
+    OCache oc = ui.sess.glob.oc;
+    if((oc.getgob(playergob)) != null && oc.getgob(playergob).getc() != null){
+      Coord gotoc = oc.getgob(playergob).getc();
+      //setup movement
+      Coord c1 = new Coord((int)((MainFrame.centerPoint.x+(21))),(int)(((MainFrame.centerPoint.y-(11))))); //Find the Coord we want to move to
+      Coord mc = MapView.s2m(c1.add(MapView.viewoffset(this.sz, this.mc).inv()));
+      
+      north = (mc.y > oc.getgob(playergob).getc().y) ? 1 : -1;
+      
+      
+      c1 = new Coord((int)((MainFrame.centerPoint.x+(21*5))),(int)(((MainFrame.centerPoint.y+(11*5)))));
+      mc = MapView.s2m(c1.add(MapView.viewoffset(this.sz, this.mc).inv()));
+      
+      east = (mc.x > oc.getgob(playergob).getc().x) ? 1 : -1;
+      ready = true;
+
+    }
+	}
+	
     public void resetcam(){
 	if(cam != null){
 	    cam.reset();
@@ -636,7 +664,8 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 	    return(true);
 	}
     }
-	
+    
+    
     public void mousemove(Coord c) {
 	c = new Coord((int)(c.x/getScale()), (int)(c.y/getScale()));
 	this.pmousepos = c;
@@ -666,20 +695,19 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 	} else if(hit != null && ui.modshift){
 	    String s;
 	    s = "Res found on gob " + hit.id;
-	    String names[] = hit.resnames();
-	    if(names.length > 0){
-		for(String name : names){
-		    if(name.contains("gfx/borka")){
-			name = name.replace("gfx/borka/","");
-			if(name.contains("/"))
-			    name = name.substring(0,name.indexOf("/"));
-			if(name.equals("body") || name.startsWith("hair") || s.contains(name))
+	    Layered l = hit.getattr(Layered.class);
+	    if(l != null && l.layers != null){
+		for(Indir<Resource> res : l.layers){
+		    if(res.get() != null){
+			String r = res.get().name.replace("gfx/borka/","");
+			if(r.contains("/"))
+			    r = r.substring(0,r.indexOf("/"));
+			if(r.equals("body") || r.startsWith("hair") || s.contains(r))
 			    continue;
+			s += "\n"+r;
 		    }
-		    s += "\n"+name;
 		}
 	    }
-
 	    if(tip == null || !tips.equals(s)){
 		tips = s;
 		tip = null;
@@ -700,6 +728,14 @@ public class MapView extends Widget implements DTarget, Console.Directory {
     }
     
     public boolean mousewheel(Coord c, int amount) {
+	if(ui.modctrl){
+	    alpha += -amount*Config.wheel_to_real;
+	    if(alpha > 255)
+		alpha = 255;
+	    else if(alpha < 0)
+		alpha = 0;
+	    return(true);
+	}
 	if(!Config.zoom)
 	    return false;
 	si = Math.min(8, Math.max(0, si - amount));
@@ -820,21 +856,24 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 	    throw(new Loading());
 	return(ol);
     }
-	
+		static final int FULL_COL = 0xFFFFFFFF;
     private void drawtile(GOut g, Coord tc, Coord sc) {
-	Tile t;
-		
-	try {
-	    t = getground(tc);
-	    //t = gettile(tc).ground.pick(0);
-	    g.image(t.tex(), sc);
-	    //g.setColor(FlowerMenu.pink);
-	    //Utils.drawtext(g, Integer.toString(t.i), sc);
-	    for(Tile tt : gettrans(tc)) {
-		g.image(tt.tex(), sc);
-	    }
-	} catch (Loading e) {}
-    }
+				Tile t;
+				Color c;
+				try{
+				t = getground(tc);
+				if((c=Config.tile_c.get(t.id)) != null && c.getRGB() != FULL_COL)
+						g.chcolor(c);
+				g.image(t.tex(), sc);
+				g.chcolor();
+				for(Tile tt : gettrans(tc)) {
+						if((c=Config.tile_c.get(tt.id)) != null && c.getRGB() != FULL_COL)
+								g.chcolor(c);
+						g.image(tt.tex(), sc);
+						g.chcolor();
+				}
+				}catch(Loading l){}
+		}
     
     private void drawol(GOut g, Coord tc, Coord sc) {
 	int ol;
@@ -966,6 +1005,21 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 		UI.instance.mnu.wdgmsg("act", (Object[])action);
 		lastah = System.currentTimeMillis() + 5000;
 	}
+    
+    private void drawbeastradius(GOut g) {
+	String name;
+	g.chcolor(255, 0, 0, 96);
+	synchronized (glob.oc) {
+	    for (Gob tg : glob.oc) {
+		name = tg.resname();
+		if ((tg.sc!=null)&&(name.indexOf("/cdv")<0)&&((name.indexOf("kritter/boar")>=0)
+			|| (name.indexOf("kritter/bear")>=0))) {
+		    drawradius(g, tg.sc, 100);
+		}
+	    }
+	}
+	g.chcolor();
+    }
     
     private void drawtracking(GOut g) {
 	g.chcolor(255, 0, 255, 128);
@@ -1110,14 +1164,14 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 	tc.y += (sz.x / (2 * stw)) - (sz.y / (2 * sth));
 	for(y = 0; y < (sz.y / sth) + 2; y++) {
 	    for(x = 0; x < (sz.x / stw) + 3; x++) {
-		for(i = 0; i < 2; i++) {
-		    ctc = tc.add(new Coord(x + y, -x + y + i));
-		    sc = m2s(ctc.mul(tilesz)).add(oc);
-		    sc.x -= tilesz.x * 2;
-		    drawtile(g, ctc, sc);
-		    sc.x += tilesz.x * 2;
-		    if(!Config.newclaim){drawol(g, ctc, sc);}
-		}
+					for(i = 0; i < 2; i++) {
+							ctc = tc.add(new Coord(x + y, -x + y + i));
+							sc = m2s(ctc.mul(tilesz)).add(oc);
+							sc.x -= tilesz.x * 2;
+							drawtile(g, ctc, sc);
+							sc.x += tilesz.x * 2;
+							if(!Config.newclaim){drawol(g, ctc, sc);}
+					}
 	    }
 	}
 	if(Config.newclaim){drawols(g, oc);}
@@ -1254,12 +1308,24 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 	    obscured = findobsc();
 	    if(curf != null)
 		curf.tick("obsc");
+	    boolean alpha = false;
+	    Resource.Neg ne;
 	    for(Sprite.Part part : sprites) {
+		ne = ((Gob)part.owner).getneg();
+		if(ne != null && Config.PAca.get(ne.toString()) != null && alpha){
+		    g.chcolor();
+		    alpha = false;
+		} else if(!alpha){
+		    g.chcolor(255,255,255,this.alpha);
+		    alpha = true;
+		}
 		if(part.effect != null)
 		    part.draw(part.effect.apply(g));
 		else
 		    part.draw(g);
 	    }
+	    g.chcolor();
+
 	    for(Sprite.Part part : obscured) {
 		GOut g2 = new GOut(g);
 		GobHealth hlt;
@@ -1272,6 +1338,7 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 	    
 	    if(curf != null)
 		curf.tick("draw");
+	    g.image(mask, Coord.z);
 	    //Illumination
 	    g.gl.glPopMatrix();
 	    GOut gilm = g.reclip(Coord.z, hsz);
@@ -1310,9 +1377,9 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 		}
 	    }
 	    if(!Config.muteChat){
-		for(Speaking s : speaking) {
-		    s.draw(g, s.gob.sc.add(s.off));
-		}
+	    for(Speaking s : speaking) {
+		s.draw(g, s.gob.sc.add(s.off));
+	    }
 	    }
 	    if(curf != null) {
 		curf.tick("aux");
@@ -1358,7 +1425,7 @@ public class MapView extends Widget implements DTarget, Console.Directory {
     private void checkplmove() {
 	Gob pl;
 	long now = System.currentTimeMillis();
-	if((playergob != -1) && ((pl = glob.oc.getgob(playergob)) != null) && (pl.sc != null)) {
+	if((playergob >= 0) && ((pl = glob.oc.getgob(playergob)) != null) && (pl.sc != null)) {
 	    Coord plp = pl.getc();
 	    if((plfpos == null) || !plfpos.equals(plp)) {
 		lastmove = now;
@@ -1397,6 +1464,16 @@ public class MapView extends Widget implements DTarget, Console.Directory {
     }
 
     public void draw(GOut og) {
+	if(!paload && ui.sess.glob.oc.getgob(playergob) != null){
+	    Resource.Neg ne = ui.sess.glob.oc.getgob(playergob).getneg();
+	    if(ne != null){
+		Config.PAca.put(ne.toString(),ne);
+		ne = null;
+		paload = true;
+	    }
+	}
+	if(!ready)
+		initd();
 	if(moveto != null){
 	    wdgmsg("click", moveto, moveto, 1, 0);
 	    moveto = null;
@@ -1462,7 +1539,7 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 	g.gl.glPopMatrix();
 	super.draw(og);
     }
-
+	
     private void drawPlayerPath(GOut g) {
 	Coord oc = viewoffset(sz, mc);
 	Coord pc, cc;
@@ -1554,7 +1631,7 @@ public class MapView extends Widget implements DTarget, Console.Directory {
 		    else
 			sdt = new Message(0);
 		    Gob pl;
-		    if((playergob != -1) && ((pl = glob.oc.getgob(playergob)) != null))
+		    if((playergob >= 0) && ((pl = glob.oc.getgob(playergob)) != null))
 			pl.ols.add(new Gob.Overlay(-1, res, sdt));
 		}
 	    });

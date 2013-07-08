@@ -1,7 +1,7 @@
 /*
  *  This file is part of the Haven & Hearth game client.
  *  Copyright (C) 2009 Fredrik Tolf <fredrik@dolda2000.com>, and
- *                     BjÃ¶rn Johannessen <johannessen.bjorn@gmail.com>
+ *                     Björn Johannessen <johannessen.bjorn@gmail.com>
  *
  *  Redistribution and/or modification of this file is subject to the
  *  terms of the GNU Lesser General Public License, version 3, as
@@ -26,20 +26,32 @@
 
 package haven;
 
+import static haven.MCache.cmaps;
+import static haven.MCache.tilesz;
 import haven.MCache.Grid;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.WeakHashMap;
 
-import static haven.MCache.cmaps;
-import static haven.MCache.tilesz;
+import javax.imageio.ImageIO;
 
 public class MiniMap extends Widget {
     private static final Coord VRSZ = new Coord(84,84);
@@ -64,6 +76,7 @@ public class MiniMap extends Widget {
     public int scale = 4;
     double scales[] = {0.5, 0.66, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2};
     private Tex VR;
+	Coord pcoord;
     
     public double getScale() {
         return scales[scale];
@@ -249,7 +262,7 @@ public class MiniMap extends Widget {
 		}
 	    }));
     }
-    
+
     public static Tex getsimple(final String nm){
 	synchronized(simpleTex) {
 	    if(simpleTex.containsKey(nm)){
@@ -293,76 +306,84 @@ public class MiniMap extends Widget {
 	
 	synchronized(caveTex){
 	    synchronized(simpleTex){
-		for(int y = ulg.y; (y * cmaps.y) - tc.y + (hsz.y / 2) < hsz.y; y++) {
-		    for(int x = ulg.x; (x * cmaps.x) - tc.x + (hsz.x / 2) < hsz.x; x++) {
-			Coord cg = new Coord(x, y);
-			if (mappingStartPoint == null) {
-			    mappingStartPoint = new Coord(cg);
+	    for(int y = ulg.y; (y * cmaps.y) - tc.y + (hsz.y / 2) < hsz.y; y++) {
+		for(int x = ulg.x; (x * cmaps.x) - tc.x + (hsz.x / 2) < hsz.x; x++) {
+		    Coord cg = new Coord(x, y);
+		    if (mappingStartPoint == null) {
+			mappingStartPoint = new Coord(cg);
+		    }
+		    Grid grid;
+		    synchronized(ui.sess.glob.map.req) {
+			synchronized(ui.sess.glob.map.grids) {
+			    grid = ui.sess.glob.map.grids.get(cg);
+			    if(grid == null)
+				ui.sess.glob.map.request(cg);
 			}
-			Grid grid;
-			synchronized(ui.sess.glob.map.req) {
-			    synchronized(ui.sess.glob.map.grids) {
-				grid = ui.sess.glob.map.grids.get(cg);
-				if(grid == null)
-				    ui.sess.glob.map.request(cg);
+		    }
+		    Coord relativeCoordinates = cg.sub(mappingStartPoint);
+		    String mnm = null;
+
+		    if(grid == null) {
+			mnm = coordHashes.get(relativeCoordinates);
+		    } else {
+			mnm = grid.mnm;
+		    }
+
+		    Tex tex = null;
+
+		    if (mnm != null) {
+			caveTex.clear();
+			if (!gridsHashes.containsKey(mnm)) {
+			    if ((Math.abs(relativeCoordinates.x) > 450)
+				    || (Math.abs(relativeCoordinates.y) > 450)) {
+				newMappingSession();
+				mappingStartPoint = cg;
+				relativeCoordinates = new Coord(0, 0);
+			    }
+			    gridsHashes.put(mnm, relativeCoordinates);
+			    coordHashes.put(relativeCoordinates, mnm);
+			}
+			else {
+			    Coord coordinates = gridsHashes.get(mnm);
+			    if (!coordinates.equals(relativeCoordinates)) {
+				mappingStartPoint = mappingStartPoint.add(relativeCoordinates.sub(coordinates));
 			    }
 			}
-			Coord relativeCoordinates = cg.sub(mappingStartPoint);
-			String mnm = null;
-
-			if(grid == null) {
-			    mnm = coordHashes.get(relativeCoordinates);
-			} else {
-			    mnm = grid.mnm;
-			}
-
-			Tex tex = null;
-
-			if (mnm != null) {
-			    caveTex.clear();
-			    if (!gridsHashes.containsKey(mnm)) {
-				if ((Math.abs(relativeCoordinates.x) > 450)
-					|| (Math.abs(relativeCoordinates.y) > 450)) {
-				    newMappingSession();
-				    mappingStartPoint = cg;
-				    relativeCoordinates = new Coord(0, 0);
-				}
-				gridsHashes.put(mnm, relativeCoordinates);
-				coordHashes.put(relativeCoordinates, mnm);
-			    }
-			    else {
-				Coord coordinates = gridsHashes.get(mnm);
-				if (!coordinates.equals(relativeCoordinates)) {
-				    mappingStartPoint = mappingStartPoint.add(relativeCoordinates.sub(coordinates));
-				}
-			    }
 
 			    if(grid!=null){
-				simpleTex.put(mnm, grid.getTex());
+			    	simpleTex.put(mnm, grid.getTex());
 			    }
+			    
+			    if((tex == null)&&(grid!=null)){
+			    	tex = grid.getTex();
+			    }
+			    
 			    if(!Config.simplemap){
-				tex = getgrid(mnm);
+			    	tex = getgrid(mnm);
 			    }
 			    if(Config.simplemap || tex == null){
-				tex = getsimple(mnm);
+			    	tex = getsimple(mnm);
 			    }
-			} else {
-			    if(grid != null) {
-				tex = grid.getTex();
-				if(tex != null) {
-				    caveTex.put(cg, tex);
-				}
+			    
+		    } else {
+			if(grid != null) {
+			    tex = grid.getTex();
+			    if(tex != null) {
+				caveTex.put(cg, tex);
 			    }
-			    tex = caveTex.get(cg);
 			}
-
-			if (tex == null)
-			    continue;
-
-			if(!hidden) g.image(tex, cg.mul(cmaps).add(tc.inv()).add(hsz.div(2)));
+			tex = caveTex.get(cg);
 		    }
+
+		    //caveTex.isEmpty();
+
+		    if (tex == null)
+			continue;
+
+		    if(!hidden) g.image(tex, cg.mul(cmaps).add(tc.inv()).add(hsz.div(2)));
 		}
 	    }
+	}
 	}
 	//grid
 	if(grid&&!hidden) {
@@ -446,7 +467,10 @@ public class MiniMap extends Widget {
 		    Coord ptc = m.getc();
 		    if(ptc == null)
 			continue;
-		    ptc = c0.add(ptc.div(tilesz));
+		    ptc = ptc.div(tilesz).add(tc.inv()).add(hsz.div(2));
+			if(m.gobid == ui.mainview.playergob){
+				pcoord = ptc.add(plx.layer(Resource.negc).cc.inv());
+			}
 		    g.chcolor(m.col.getRed(), m.col.getGreen(), m.col.getBlue(), 128);
 		    g.image(plx.layer(Resource.imgc).tex(), ptc.add(plx.layer(Resource.negc).cc.inv()));
 		    g.chcolor();
@@ -518,10 +542,15 @@ public class MiniMap extends Widget {
     }
     
     public boolean mousedown(Coord c, int button) {
-	if(button == 1) {
-	    ui.grabmouse(this);
-	    dm = true;
-	    doff = c;
+	switch(button){
+	case 1: ui.grabmouse(this);
+			dm = true;
+			doff = c; break;
+	case 3: if(pcoord == null)
+				break;
+			Coord of = c.sub(pcoord);
+			Coord pc = ui.sess.glob.oc.getgob(ui.mainview.playergob).getc();
+			ui.mainview.wdgmsg("click",Coord.fake,pc.add(of.x*ui.mainview.east*MapView.ONE_TILE,of.y*MapView.ONE_TILE),1,ui.modflags());
 	}
 	return(true);
     }

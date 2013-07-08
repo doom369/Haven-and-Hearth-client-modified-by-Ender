@@ -1,7 +1,7 @@
 /*
  *  This file is part of the Haven & Hearth game client.
  *  Copyright (C) 2009 Fredrik Tolf <fredrik@dolda2000.com>, and
- *                     BjÃ¶rn Johannessen <johannessen.bjorn@gmail.com>
+ *                     Björn Johannessen <johannessen.bjorn@gmail.com>
  *
  *  Redistribution and/or modification of this file is subject to the
  *  terms of the GNU Lesser General Public License, version 3, as
@@ -26,22 +26,38 @@
 
 package haven;
 
+import static haven.Utils.getprop;
+
+import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.net.URL;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import ender.CurioInfo;
 import ender.GoogleTranslator;
 import ender.HLInfo;
 import ender.SkillAvailability;
 import ender.SkillAvailability.Combat;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.awt.*;
-import java.io.*;
-import java.net.URL;
-import java.util.*;
-import java.util.regex.Pattern;
-
-import static haven.Utils.getprop;
 
 public class Config {
     public static byte[] authck;
@@ -76,8 +92,8 @@ public class Config {
     public static HashMap<Pattern, String> smileys;
     public static boolean nightvision;
     public static String currentCharName;
+    public static Properties options, window_props,keys;
     public static String currentVersion;
-    public static Properties options, window_props;
     public static int sfxVol;
     public static int musicVol;
     public static boolean isMusicOn = false;
@@ -95,12 +111,16 @@ public class Config {
     public static boolean newclaim;
     public static boolean showq;
     public static boolean showpath;
-    public static Map<String, Map<String, Float>> FEPMap = new HashMap<String, Map<String, Float>>();
+    public static Map<String, Map<String, Float>> FEPMap = new HashMap<String,Map<String, Float>>();	
+		public static Map<Integer,Color> tile_c = new HashMap<Integer,Color>(50);
     public static Map<String, CurioInfo> curios = new HashMap<String, CurioInfo>();
+    public static int tiles_per_click = 5;
     public static Map<String, SkillAvailability> skills;
+    public static int wheel_to_real = 20;
     public static Map<String, String> crafts = new HashMap<String, String>();
+    public static Map<String,Resource.Neg> PAca = new HashMap<String,Resource.Neg>();
     public static Map<String, String> beasts = new HashMap<String, String>();
-    //public static 
+    public static boolean global_ui_lock = false;
     public static boolean highlightSkills;
     public static boolean fps = false;
     public static boolean TEST = false;
@@ -148,6 +168,7 @@ public class Config {
 	    currentCharName = "";
 	    options = new Properties();
 	    window_props = new Properties();
+		keys = new Properties();
 	    hideObjectList = Collections.synchronizedSet(new HashSet<String>());
 	    highlightItemList = Collections.synchronizedSet(new HashSet<String>());
 	    loadOptions();
@@ -164,7 +185,27 @@ public class Config {
 	    throw(new RuntimeException(e));
 	}
     }
-    
+
+    public static void loadPA()
+    {
+	try{
+	    BufferedReader br = new BufferedReader(new InputStreamReader(new DataInputStream(new FileInputStream("pa"))));
+	    String l;
+	    Resource r;
+	    Resource.Neg ne;
+	    while( (l=br.readLine()) != null){
+		r = Resource.load(l);
+		r.loadwait();
+		PAca.put((ne=r.layer(Resource.negc)).toString(),ne);
+	    }
+	    ne = null;
+	    r = null;
+	    br.close();
+	}catch(Exception e){
+	    e.printStackTrace();
+	    System.exit(1);
+	}
+    }
     public static String mksmiley(String str){
 	synchronized (smileys) {
 	    for(Pattern p : Config.smileys.keySet()){
@@ -191,8 +232,8 @@ public class Config {
 	} catch (JSONException e) {
 	    e.printStackTrace();
 	}
-    }
-    
+}
+
     private static void loadBeasts() {
 	//bear
 	String pat = "kritter/bear";
@@ -227,7 +268,7 @@ public class Config {
 	hlcfg.put(pat, inf);
     }
 
-    private static void loadHighlight() {
+	private static void loadHighlight() {
 	try {
 	    FileInputStream fstream;
 	    fstream = new FileInputStream("highlight.conf");
@@ -274,7 +315,7 @@ public class Config {
 	}
     }
     
-    private static void loadCurrentHighlight() {
+	private static void loadCurrentHighlight() {
 	try {
 	    FileInputStream fstream;
 	    fstream = new FileInputStream("highlight.cfg");
@@ -309,7 +350,7 @@ public class Config {
 	    e.printStackTrace();
 	}
     }
-
+    
     private static void loadCraft() {
 	try {
 	    FileInputStream fstream;
@@ -479,7 +520,8 @@ public class Config {
 	try {
 	    FileInputStream fstream;
 	    fstream = new FileInputStream("smileys.conf");
-	    BufferedReader br = new BufferedReader(new InputStreamReader(fstream, "UTF-8"));
+	    DataInputStream in = new DataInputStream(fstream);
+	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
 	    String strLine;
 	    while ((strLine = br.readLine()) != null)   {
 		String [] tmp = strLine.split("\t");
@@ -488,8 +530,7 @@ public class Config {
 		res = "\\$img\\[smiley\\/"+tmp[1]+"\\]";
 		smileys.put(Pattern.compile(smile, Pattern.CASE_INSENSITIVE|Pattern.LITERAL), res);
 	    }
-	    br.close();
-	    fstream.close();
+	    in.close();
 	} catch (FileNotFoundException e) {
 	} catch (IOException e) {
 	}
@@ -512,11 +553,7 @@ public class Config {
     private static void loadOptions() {
         File inputFile = new File("haven.conf");
         if (!inputFile.exists()) {
-            try {
-		inputFile.createNewFile();
-	    } catch (IOException e) {
-		return;
-	    }
+            return;
         }
         try {
             options.load(new FileInputStream("haven.conf"));
@@ -524,6 +561,7 @@ public class Config {
         catch (IOException e) {
             System.out.println(e);
         }
+        String hideObjects = options.getProperty("hideObjects", "");
         GoogleTranslator.apikey = options.getProperty("GoogleAPIKey", "AIzaSyCuo-ukzI_J5n-inniu2U7729ZfadP16_0");
         zoom = options.getProperty("zoom", "false").equals("true");
         noborders = options.getProperty("noborders", "false").equals("true");
@@ -554,12 +592,12 @@ public class Config {
         showViewDistance = options.getProperty("showViewDistance", "false").equals("true");
         sfxVol = Integer.parseInt(options.getProperty("sfx_vol", "100"));
         musicVol = Integer.parseInt(options.getProperty("music_vol", "100"));
+	global_ui_lock = options.getProperty("global_ui_lock","false").equals("true");
         currentVersion = options.getProperty("version", "");
         autohearth = options.getProperty("autohearth", "false").equals("true");
         hearthunknown = options.getProperty("hearthunknown", "false").equals("true");
         hearthred = options.getProperty("hearthred", "false").equals("true");
         hideObjectList.clear();
-        String hideObjects = options.getProperty("hideObjects", "");
         if (!hideObjects.isEmpty()) {
             for (String objectName : hideObjects.split(",")) {
                 if (!objectName.isEmpty()) {
@@ -577,6 +615,7 @@ public class Config {
         }
         Resource.checkhide();
         timestamp = options.getProperty("timestamp","false").equals("true");
+		tiles_per_click = Integer.parseInt(options.getProperty("tiles_per_click","5"));
     }
 
     public static synchronized void setWindowOpt(String key, String value) {
@@ -649,6 +688,8 @@ public class Config {
         options.setProperty("newclaim", newclaim?"true":"false");
         options.setProperty("showq", showq?"true":"false");
         options.setProperty("showpath", showpath?"true":"false");
+	options.setProperty("tiles_per_click",Integer.toString(tiles_per_click));
+	options.setProperty("global_ui_lock",global_ui_lock?"true":"false");
         options.setProperty("showgobpath", showgobpath?"true":"false");
         options.setProperty("showothergobpath", showothergobpath?"true":"false");
         options.setProperty("highlightSkills", highlightSkills?"true":"false");
