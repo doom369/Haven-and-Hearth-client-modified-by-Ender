@@ -27,10 +27,7 @@
 package haven;
 
 import java.applet.Applet;
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -151,9 +148,9 @@ public class HavenApplet extends Applet {
 	synchronized(applets) {
 	    applets.put(p, this);
 	}
-	Thread main = new HackThread(p, new Runnable() {
+	Thread main = new Thread(p, new Runnable() {
 		public void run() {
-		    Thread ui = new HackThread(h, "Haven UI thread");
+		    Thread ui = new Thread(h, "Haven UI thread");
 		    ui.start();
 		    try {
 			while(true) {
@@ -199,7 +196,7 @@ public class HavenApplet extends Applet {
 		public void show(URL url) {
 		    HavenApplet a;
 		    synchronized(applets) {
-			a = applets.get(HackThread.tg());
+			a = applets.get(Thread.currentThread().getThreadGroup());
 		    }
 		    if(a != null)
 			a.getAppletContext().showDocument(url);

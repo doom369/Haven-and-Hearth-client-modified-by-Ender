@@ -26,14 +26,13 @@
 
 package haven;
 
-import java.awt.Color;
-import java.awt.Font;
+import ender.GoogleTranslator;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-
-import ender.GoogleTranslator;
 
 public class Window extends Widget implements DTarget {
     static Tex bg = Resource.loadtex("gfx/hud/bgtex");
@@ -194,9 +193,9 @@ public class Window extends Widget implements DTarget {
     }
 	
     public void uimsg(String msg, Object... args) {
-	if(msg == "pack") {
+	if(msg.equals("pack")) {
 	    pack();
-	} else if(msg == "dt") {
+	} else if(msg.equals("dt")) {
 	    dt = (Integer)args[0] != 0;
 	} else {
 	    super.uimsg(msg, args);
@@ -250,7 +249,6 @@ public class Window extends Widget implements DTarget {
 	String name = cap.text;
 	if(storePosSet.contains(name)){
 	    Config.setWindowOpt(name+"_pos", c.toString());
-	    return;
 	}
     }
     
@@ -259,7 +257,6 @@ public class Window extends Widget implements DTarget {
 	String name = cap.text;
 	if(storePosSet.contains(name)){
 	    c = new Coord(Config.window_props.getProperty(name+"_pos", c.toString()));
-	    return;
 	}
     }
     

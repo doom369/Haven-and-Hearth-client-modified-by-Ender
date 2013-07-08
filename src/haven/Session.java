@@ -27,17 +27,8 @@
 package haven;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.TreeMap;
+import java.net.*;
+import java.util.*;
 
 public class Session {
     public static final int PVER = 2;
@@ -161,7 +152,7 @@ public class Session {
 	}
     }
     
-    private class Ticker extends HackThread {
+    private class Ticker extends Thread {
 	public Ticker() {
 	    super("Server time ticker");
 	    setDaemon(true);
@@ -181,7 +172,7 @@ public class Session {
 	}
     }
 	
-    private class RWorker extends HackThread {
+    private class RWorker extends Thread {
 	boolean alive;
 		
 	public RWorker() {
@@ -496,7 +487,7 @@ public class Session {
 	}
     }
 	
-    private class SWorker extends HackThread {
+    private class SWorker extends Thread {
 		
 	public SWorker() {
 	    super("Session writer");

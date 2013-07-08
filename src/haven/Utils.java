@@ -26,23 +26,12 @@
 
 package haven;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,7 +48,7 @@ public class Utils {
 	return(new Coord(img.getWidth(), img.getHeight()));
     }
 	
-    public static class Background extends HackThread {
+    public static class Background extends Thread {
 	Queue<Runnable> q = new LinkedList<Runnable>();
 		
 	public Background() {
@@ -132,24 +121,6 @@ public class Utils {
 		}
 	    }
 	}
-    }
-	
-    public static int drawtext(Graphics g, String text, Coord c) {
-	java.awt.FontMetrics m = g.getFontMetrics();
-	g.drawString(text, c.x, c.y + m.getAscent());
-	return(m.getHeight());
-    }
-	
-    static Coord textsz(Graphics g, String text) {
-	java.awt.FontMetrics m = g.getFontMetrics();
-	java.awt.geom.Rectangle2D ts = m.getStringBounds(text, g);
-	return(new Coord((int)ts.getWidth(), (int)ts.getHeight()));
-    }
-	
-    static void aligntext(Graphics g, String text, Coord c, double ax, double ay) {
-	java.awt.FontMetrics m = g.getFontMetrics();
-	java.awt.geom.Rectangle2D ts = m.getStringBounds(text, g);
-	g.drawString(text, (int)(c.x - ts.getWidth() * ax), (int)(c.y + m.getAscent() - ts.getHeight() * ay));
     }
 	
     static void line(Graphics g, Coord c1, Coord c2) {

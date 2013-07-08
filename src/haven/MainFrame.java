@@ -26,25 +26,12 @@
 
 package haven;
 
-import java.awt.Dimension;
-import java.awt.DisplayMode;
-import java.awt.Frame;
-import java.awt.GraphicsDevice;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.Writer;
+import java.io.*;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -121,13 +108,6 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	return(prefs != null);
     }
 
-    public void togglefs() {
-	if(prefs == null)
-	    setfs();
-	else
-	    setwnd();
-    }
-
     private void seticon() {
 	Image icon;
 	try {
@@ -195,7 +175,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
             centerPoint.setLocation(innerSize.width / 2, innerSize.height / 2);
         }
     });
-	Thread ui = new HackThread(p, "Haven UI thread");
+	Thread ui = new Thread(p, "Haven UI thread");
 	p.setfsm(this);
 	ui.start();
 	try {
@@ -265,9 +245,9 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	javax.imageio.spi.IIORegistry.getDefaultInstance();
     }
 
-    private static void main2(String[] args) {
+    public static void main(String[] args) {
 	Config.cmdline(args);
-	ThreadGroup g = HackThread.tg();
+	ThreadGroup g = Thread.currentThread().getThreadGroup();
 	setupres();
 	MainFrame f = new MainFrame(800, 600);
 	if(Config.fullscreen)
@@ -300,42 +280,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
 	    } catch(IOException e) {}
 	}
     }
-    
-    public static void main(final String[] args) {
-	/* Set up the error handler as early as humanly possible. */
-	ThreadGroup g = new ThreadGroup("Haven client");
-	String ed;
-	if(!(ed = Utils.getprop("haven.errorurl", "")).equals("")) {
-	    try {
-		final haven.error.ErrorHandler hg = new haven.error.ErrorHandler(new java.net.URL(ed));
-		hg.sethandler(new haven.error.ErrorGui(null) {
-			public void errorsent() {
-			    hg.interrupt();
-			}
-		    });
-		g = hg;
-	    } catch(java.net.MalformedURLException e) {
-	    }
-	}
-	Thread main = new HackThread(g, new Runnable() {
-		public void run() {
-		    try {
-			javabughack();
-		    } catch(InterruptedException e) {
-			return;
-		    }
-		    main2(args);
-		}
-	    }, "Haven main thread");
-	main.start();
-	try {
-	    main.join();
-	} catch(InterruptedException e) {
-	    g.interrupt();
-	    return;
-	}
-	System.exit(0);
-    }
+
 	
     private static void dumplist(Collection<Resource> list, String fn) {
 	try {

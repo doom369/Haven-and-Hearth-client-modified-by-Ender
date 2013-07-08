@@ -240,21 +240,21 @@ public class Widget {
     }
 	
     public void uimsg(String msg, Object... args) {
-	if(msg == "tabfocus") {
+	if(msg.equals("tabfocus")) {
 	    setfocustab(((Integer)args[0] != 0));
-	} else if(msg == "act") {
+	} else if(msg.equals("act")) {
 	    canactivate = (Integer)args[0] != 0;
-	} else if(msg == "cancel") {
+	} else if(msg.equals("cancel")) {
 	    cancancel = (Integer)args[0] != 0;
-	} else if(msg == "autofocus") {
+	} else if(msg.equals("autofocus")) {
 	    autofocus = (Integer)args[0] != 0;
-	} else if(msg == "focus") {
-	    Widget w = ui.widgets.get((Integer)args[0]); 
+	} else if(msg.equals("focus")) {
+	    Widget w = ui.widgets.get(args[0]);
 	    if(w != null) {
 		if(w.canfocus)
 		    setfocus(w);
 	    }
-	} else if(msg == "curs") {
+	} else if(msg.equals("curs")) {
 	    if(args.length == 0)
 		cursor = null;
 	    else
