@@ -26,14 +26,7 @@
 
 package haven;
 
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MetaEventListener;
-import javax.sound.midi.MetaMessage;
-import javax.sound.midi.MidiChannel;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Sequencer;
-import javax.sound.midi.Synthesizer;
+import javax.sound.midi.*;
 
 public class Music {
     private static Player player;
@@ -54,7 +47,7 @@ public class Music {
 	    player.setVolume(vol);
     }
     
-    private static class Player extends HackThread {
+    private static class Player extends Thread {
 	private Resource res;
 	private Thread waitfor;
 	private Sequencer seq;

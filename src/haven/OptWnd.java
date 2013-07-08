@@ -30,12 +30,7 @@ import haven.SelectorWnd.Callback;
 
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class OptWnd extends Window {
     public static final RichText.Foundry foundry = new RichText.Foundry(TextAttribute.FAMILY, "SansSerif", TextAttribute.SIZE, 10);
@@ -81,7 +76,7 @@ public class OptWnd extends Window {
 
 	    new Button(new Coord(10, 40), 125, tab, "Quit") {
 		public void click() {
-		    HackThread.tg().interrupt();
+            Thread.currentThread().getThreadGroup().interrupt();
 		}};
 	    new Button(new Coord(10, 70), 125, tab, "Log out") {
 		public void click() {

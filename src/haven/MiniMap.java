@@ -26,32 +26,20 @@
 
 package haven;
 
-import static haven.MCache.cmaps;
-import static haven.MCache.tilesz;
 import haven.MCache.Grid;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.WeakHashMap;
+import java.util.*;
 
-import javax.imageio.ImageIO;
+import static haven.MCache.cmaps;
+import static haven.MCache.tilesz;
 
 public class MiniMap extends Widget {
     private static final Coord VRSZ = new Coord(84,84);
@@ -200,7 +188,7 @@ public class MiniMap extends Widget {
 	void start() {
 	    synchronized(this) {
 		if(me == null) {
-		    me = new HackThread(this, "Minimap loader");
+		    me = new Thread(this, "Minimap loader");
 		    me.setDaemon(true);
 		    me.start();
 		}

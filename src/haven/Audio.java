@@ -26,17 +26,11 @@
 
 package haven;
 
+import javax.sound.sampled.*;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
-
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class Audio {
     public static boolean enabled = true;
@@ -110,7 +104,7 @@ public class Audio {
 	}
     }
 	
-    private static class Player extends HackThread {
+    private static class Player extends Thread {
 	private Collection<CS> clips = new LinkedList<CS>();
 	private int srate, nch = 2;
 	

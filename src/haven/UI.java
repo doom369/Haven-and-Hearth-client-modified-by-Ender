@@ -31,11 +31,7 @@ import haven.CharWnd.Study;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class UI {
     static public UI instance;
@@ -72,7 +68,7 @@ public class UI {
 	{
 	    setcmd("q", new Command() {
 		    public void run(Console cons, String[] args) {
-			HackThread.tg().interrupt();
+                Thread.currentThread().getThreadGroup().interrupt();
 		    }
 		});
 	    setcmd("lo", new Command() {
