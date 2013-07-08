@@ -26,37 +26,22 @@
 
 package haven;
 
-import static haven.Utils.getprop;
-
-import java.awt.Color;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import ender.CurioInfo;
 import ender.GoogleTranslator;
 import ender.HLInfo;
 import ender.SkillAvailability;
 import ender.SkillAvailability.Combat;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.awt.*;
+import java.io.*;
+import java.net.URL;
+import java.util.*;
+import java.util.regex.Pattern;
+
+import static haven.Utils.getprop;
 
 public class Config {
     public static byte[] authck;
@@ -136,11 +121,11 @@ public class Config {
 	    if((p = getprop("haven.authck", null)) != null)
 		authck = Utils.hex2byte(p);
 	    authuser = getprop("haven.authuser", null);
-	    authserv = getprop("haven.authserv", null);
-	    defserv = getprop("haven.defserv", null);
-	    if(!(p = getprop("haven.resurl", "http://www.havenandhearth.com/res/")).equals(""))
+        authserv = getprop("haven.authserv", "moltke.seatribe.se");
+        defserv = getprop("haven.defserv", "moltke.seatribe.se");
+	    if(!(p = getprop("haven.resurl", "https://www.havenandhearth.com/res/")).equals(""))
 		resurl = new URL(p);
-	    if(!(p = getprop("haven.mapurl", "http://www.havenandhearth.com/mm/")).equals(""))
+	    if(!(p = getprop("haven.mapurl", "https://www.havenandhearth.com/mm/")).equals(""))
 		mapurl = new URL(p);
 	    fullscreen = getprop("haven.fullscreen", "off").equals("on");
 	    loadwaited = getprop("haven.loadwaited", null);
