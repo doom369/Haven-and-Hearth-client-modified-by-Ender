@@ -111,7 +111,7 @@ public class MainFrame extends Frame implements Runnable, FSMan {
     private void seticon() {
 	Image icon;
 	try {
-	    InputStream data = MainFrame.class.getResourceAsStream("icon.png");
+	    InputStream data = MainFrame.class.getResourceAsStream("/icon.png");
 	    icon = javax.imageio.ImageIO.read(data);
 	    data.close();
 	} catch(IOException e) {
