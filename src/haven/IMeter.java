@@ -114,7 +114,6 @@ public class IMeter extends Widget {
 		if (dm) {
 			ui.grabmouse(null);
 			dm = false;
-			Config.setWindowOpt(bgname, this.c.toString());
 		} else {
 			super.mouseup(c, button);
 		}

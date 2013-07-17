@@ -34,11 +34,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,7 +50,12 @@ import java.util.regex.Pattern;
 import java.awt.event.KeyEvent;
 import java.awt.Color;
 
-import ender.GoogleTranslator;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import ender.*;
+import ender.SkillAvailability.Combat;
 
 public class Config {
     public static byte[] authck;

@@ -252,7 +252,7 @@ public class OptWnd extends Window {
 			}
 		    }).a = Config.hearthred;
 		
-	   new TextEntry(new Coord( 220+(new Label(new Coord(220,460),tab,"Tiles per click")).sz.x+10 ,420),new Coord(30,20),tab,Integer.toString(Config.tiles_per_click)){
+	   new TextEntry(new Coord( 420+(new Label(new Coord(420,235),tab,"Tiles per click")).sz.x+10 ,235),new Coord(30,20),tab,Integer.toString(Config.tiles_per_click)){
 	          public boolean type(char c,java.awt.event.KeyEvent ev){
 	              if((c>=48 && c<=57) || c==8){
 	              super.type(c, ev);
@@ -265,7 +265,7 @@ public class OptWnd extends Window {
 	          }
 	          };
 
-          (new CheckBox(new Coord(220, 475), tab, "Lock ui") {
+          (new CheckBox(new Coord(440, 255), tab, "Lock ui") {
               public void changed(boolean val) {
               Config.global_ui_lock = val;
               Config.saveOptions();

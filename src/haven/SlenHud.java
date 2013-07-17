@@ -469,7 +469,7 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
 	return(super.mousewheel(c, amount));
     }
     
-    private void toggleopts() {
+    public void toggleopts() {
 	if(optwnd != null) {
 	    optwnd.wdgmsg("close");
 	} else {
