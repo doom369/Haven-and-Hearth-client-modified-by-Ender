@@ -297,9 +297,9 @@ public class Widget {
 		continue;
 	    Coord cc = xlate(wdg.c, true);
 	    if(c.isect(cc, (wdg.hsz == null)?wdg.sz:wdg.hsz)) {
-		if(wdg.mousedown(c.add(cc.inv()), button)) {
-		    return(true);
-		}
+    		if(wdg.mousedown(c.add(cc.inv()), button)) {
+    		    return(true);
+    		}
 	    }
 	}
 	return(false);

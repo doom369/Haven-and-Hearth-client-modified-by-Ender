@@ -1,0 +1,17 @@
+#ABUTTON LAYER FOR RES src//\paginae\auto\jogger.res
+#String pr
+paginae/act/auto
+#uint16 pver
+2
+#String name
+Joggers
+#String preq
+
+#uint16 hk
+97
+#uint16 ad length
+2
+#String ad[0]
+@
+#String ad[1]
+jogger

@@ -63,7 +63,7 @@ public class SlenHud extends ConsoleHost implements DTarget, DropTarget, Console
     FoldButton fb;
     Button sub, sdb;
     VC vc;
-    static Text.Foundry errfoundry = new Text.Foundry(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 14), new Color(192, 0, 0));
+    static Text.Foundry errfoundry = new Text.Foundry(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 16), new Color(255, 255, 255));
     Text lasterr;
     long errtime;
     OptWnd optwnd = null;

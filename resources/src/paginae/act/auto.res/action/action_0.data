@@ -1,0 +1,13 @@
+#ABUTTON LAYER FOR RES src//\paginae\act\auto.res
+#String pr
+
+#uint16 pver
+2
+#String name
+Auto
+#String preq
+
+#uint16 hk
+119
+#uint16 ad length
+0

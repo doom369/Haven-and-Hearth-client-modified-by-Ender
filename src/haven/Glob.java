@@ -52,6 +52,8 @@ public class Glob {
 	party = new Party(this);
 	//adding extended commands
 	paginae.add(Resource.load("paginae/act/add"));
+	paginae.add(Resource.load("paginae/act/auto"));
+	paginae.add(Resource.load("paginae/auto/jogger"));
 	paginae.add(Resource.load("paginae/add/rad"));
 	paginae.add(Resource.load("paginae/add/radar"));
 	paginae.add(Resource.load("paginae/add/shhd"));

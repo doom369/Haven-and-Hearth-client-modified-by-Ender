@@ -31,7 +31,10 @@ import haven.Resource.AButton;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.font.TextAttribute;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+
+import bot.Jogger;
 
 public class MenuGrid extends Widget {
     private static final Color pressedColor = new Color(196, 196, 196, 196);
@@ -345,6 +348,9 @@ public class MenuGrid extends Widget {
 	    } else {
 		ui.wiki.wdgmsg(ui.wiki.cbtn, "click");
 	    }
+	} else if(list[1].equals("jogger")) {
+	    Jogger jogger = new Jogger(ui);
+	    jogger.runBotCommand();
 	}
 	use(null);
     }
