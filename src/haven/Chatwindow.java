@@ -31,12 +31,12 @@ public class Chatwindow extends ChatHW {
     static {
 	Widget.addtype("chat", new WidgetFactory() {
 		public Widget create(Coord c, Widget parent, Object[] args) {
-		    return(new Chatwindow(parent));
+		    return(new Chatwindow(c, (Coord)args[0], parent));
 		}
 	    });
     }
 	
-    public Chatwindow(Widget parent) {
+    public Chatwindow(Coord c, Coord sz, Widget parent) {
 	super(parent,"Global",true);
     }
     public void uimsg(String msg, Object... args) {

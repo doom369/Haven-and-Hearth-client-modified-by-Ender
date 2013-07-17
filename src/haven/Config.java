@@ -28,36 +28,27 @@ package haven;
 
 import static haven.Utils.getprop;
 
-import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.awt.event.KeyEvent;
+import java.awt.Color;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import ender.CurioInfo;
 import ender.GoogleTranslator;
-import ender.HLInfo;
-import ender.SkillAvailability;
-import ender.SkillAvailability.Combat;
 
 public class Config {
     public static byte[] authck;
@@ -173,6 +164,7 @@ public class Config {
 	    highlightItemList = Collections.synchronizedSet(new HashSet<String>());
 	    loadOptions();
 	    loadWindowOptions();
+	    loadkopts();
 	    loadSmileys();
 	    loadFEP();
 	    loadCurios();
@@ -707,4 +699,138 @@ public class Config {
             System.out.println(e);
         }
     }
+	
+	//boshaw below
+	public static void setkopt_int(String key,int val){
+		keys.setProperty(key,Integer.toString(val));
+		savekeys();
+	}
+	public static int getkopt_int(String key,int def){
+		return Integer.parseInt(keys.getProperty(key,Integer.toString(def)));
+	}
+	
+	public static void savekeys(){
+		try{
+			keys.store(new FileOutputStream("keys.conf"), "Custom Key Bindings");
+		} catch (IOException e){
+			System.out.println(e);
+		}
+	}
+	public static void loadkopts(){
+        File inputFile = new File("keys.conf");
+        if (!inputFile.exists()) {
+            return;
+        }
+        try {
+            keys.load(new FileInputStream("keys.conf"));
+        }
+        catch (IOException e) {
+            System.out.println(e);
+        }
+	}
+	
+	public static int default_key_int(String key){
+		if(key.equals(KeyFunction.MOVE_NORTH_SKEY+"_INT"))
+			return KeyEvent.VK_UP;
+		else if(key.equals(KeyFunction.MOVE_SOUTH_SKEY+"_INT"))
+			return KeyEvent.VK_DOWN;
+		else if(key.equals(KeyFunction.MOVE_EAST_SKEY+"_INT"))
+			return KeyEvent.VK_RIGHT;
+		else if(key.equals(KeyFunction.MOVE_WEST_SKEY+"_INT"))
+			return KeyEvent.VK_LEFT;
+		else if(key.equals(KeyFunction.PROFILE_MV_SKEY+"_INT"))
+			return (int)'`';
+		else if(key.equals(KeyFunction.PROFILE_GLOB_SKEY+"_INT"))
+			return (int)'~';
+		else if(key.equals(KeyFunction.PROFILE_ILM_SKEY+"_INT"))
+			return (int)'!';
+		else if(key.equals(KeyFunction.ENTERCMD_SKEY+"_INT"))
+			return (int)':';
+		else if(key.equals(KeyFunction.OPEN_KBW_SKEY+"_INT"))
+			return (int)'k';
+		else if(key.equals(KeyFunction.OPEN_INV_SKEY+"_INT"))
+			return 9;
+		else if(key.equals(KeyFunction.OPEN_EQUI_SKEY+"_INT"))
+			return KeyEvent.VK_E;
+		else if(key.equals(KeyFunction.OPEN_CHRW_SKEY+"_INT"))
+			return KeyEvent.VK_T;
+		else if(key.equals(KeyFunction.OPEN_OPT_SKEY+"_INT"))
+			return KeyEvent.VK_O;
+		else if(key.equals(KeyFunction.OPEN_BUDDY_SKEY+"_INT"))
+			return KeyEvent.VK_B;
+		else if(key.equals(KeyFunction.OPEN_LNDW_SKEY+"_INT"))
+			return KeyEvent.VK_L;
+		else if(key.equals(KeyFunction.OPEN_GCHAT_SKEY+"_INT"))
+			return KeyEvent.VK_C;
+		else if(key.equals(KeyFunction.TOGGLE_HUD_SKEY+"_INT"))
+			return 32;
+		else if(key.equals(KeyFunction.SCREEN_SHOT_SKEY+"_INT"))
+			return KeyEvent.VK_END;
+		else if(key.equals(KeyFunction.RESET_CAM_SKEY+"_INT"))
+			return KeyEvent.VK_HOME;
+		else if(key.equals(KeyFunction.GRID_TOG_SKEY+"_INT"))
+			return KeyEvent.VK_G;
+		else if(key.equals(KeyFunction.SPEED_3_SKEY+"_INT"))
+			return 114;
+		else if(key.equals(KeyFunction.SPEED_2_SKEY+"_INT"))
+			return 101;
+		else if(key.equals(KeyFunction.SPEED_1_SKEY+"_INT"))
+			return 119;
+		else if(key.equals(KeyFunction.SPEED_0_SKEY+"_INT"))
+			return 113;
+		else if(key.equals(KeyFunction.HIDE_TOG_SKEY+"_INT"))
+			return KeyEvent.VK_H;
+		else if(key.equals(KeyFunction.XRAY_TOG_SKEY+"_INT"))
+			return KeyEvent.VK_X;
+		else if(key.equals(KeyFunction.NV_TOG_SKEY+"_INT"))
+			return KeyEvent.VK_N;
+		else {
+			return -1; //should never reach here...
+		}
+	}
+	
+	public static int default_key_bool(String key){
+		int def = KeyFunction.NORMAL;
+		if(key.equals(KeyFunction.MOVE_NORTH_SKEY+"_BOOL"))
+			return KeyFunction.SPECIAL;
+		else if(key.equals(KeyFunction.MOVE_SOUTH_SKEY+"_BOOL"))
+			return KeyFunction.SPECIAL;
+		else if(key.equals(KeyFunction.MOVE_EAST_SKEY+"_BOOL"))
+			return KeyFunction.SPECIAL;
+		else if(key.equals(KeyFunction.MOVE_WEST_SKEY+"_BOOL"))
+			return KeyFunction.SPECIAL;
+		else if(key.equals(KeyFunction.OPEN_EQUI_SKEY+"_BOOL"))
+			return KeyFunction.CTRL;
+		else if(key.equals(KeyFunction.OPEN_CHRW_SKEY+"_BOOL"))
+			return KeyFunction.CTRL;
+		else if(key.equals(KeyFunction.OPEN_OPT_SKEY+"_BOOL"))
+			return KeyFunction.CTRL;
+		else if(key.equals(KeyFunction.OPEN_BUDDY_SKEY+"_BOOL"))
+			return KeyFunction.CTRL;
+		else if(key.equals(KeyFunction.OPEN_LNDW_SKEY+"_BOOL"))
+			return KeyFunction.CTRL;
+		else if(key.equals(KeyFunction.OPEN_GCHAT_SKEY+"_BOOL"))
+			return KeyFunction.CTRL;
+		else if(key.equals(KeyFunction.SCREEN_SHOT_SKEY+"_BOOL"))
+			return KeyFunction.SPECIAL;
+		else if(key.equals(KeyFunction.RESET_CAM_SKEY+"_BOOL"))
+			return KeyFunction.SPECIAL;
+		else if(key.equals(KeyFunction.GRID_TOG_SKEY+"_BOOL"))
+			return KeyFunction.CTRL;
+		else if(key.equals(KeyFunction.SPEED_3_SKEY+"_BOOL"))
+			return KeyFunction.ALT;
+		else if(key.equals(KeyFunction.SPEED_2_SKEY+"_BOOL"))
+			return KeyFunction.ALT;
+		else if(key.equals(KeyFunction.SPEED_1_SKEY+"_BOOL"))
+			return KeyFunction.ALT;
+		else if(key.equals(KeyFunction.SPEED_0_SKEY+"_BOOL"))
+			return KeyFunction.ALT;
+		else if(key.equals(KeyFunction.HIDE_TOG_SKEY+"_BOOL"))
+			return KeyFunction.CTRL;
+		else if(key.equals(KeyFunction.XRAY_TOG_SKEY+"_BOOL"))
+			return KeyFunction.CTRL;
+		else if(key.equals(KeyFunction.NV_TOG_SKEY+"_BOOL"))
+			return KeyFunction.CTRL;
+		return def;
+	}
 }

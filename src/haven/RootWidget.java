@@ -29,6 +29,7 @@ package haven;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.Hashtable;
 
 import javax.media.opengl.GLException;
 
@@ -36,6 +37,10 @@ import com.sun.opengl.util.Screenshot;
 
 public class RootWidget extends ConsoleHost {
     public static Resource defcurs = Resource.load("gfx/hud/curs/arw");
+	public static Hashtable<Integer,IKeyFunction> skeys = new Hashtable<Integer,IKeyFunction>();
+	public static Hashtable<Character,IKeyFunction> keys = new Hashtable<Character,IKeyFunction>();
+	public static Hashtable<Character,IKeyFunction> akeys = new Hashtable<Character,IKeyFunction>();
+	public static Hashtable<Integer,IKeyFunction> ckeys = new Hashtable<Integer,IKeyFunction>();
     Logout logout = null;
     Profile gprof;
     boolean afk = false;
@@ -46,6 +51,23 @@ public class RootWidget extends ConsoleHost {
     private int fps = 0;
 	public ChatHW ircchat = null;
 	
+	static{
+	reloadkeys();
+	}
+	
+	public static void reloadkeys(){
+		skeys.clear();
+		ckeys.clear();
+		for(IKeyFunction kf: KeyFunction.funcs){
+			switch(kf.getspec()){
+			case KeyFunction.NORMAL: keys.put((char)kf.getkey(),kf);  break;
+			case KeyFunction.SPECIAL:skeys.put(kf.getkey(),kf);		  break;
+			case KeyFunction.ALT:	 akeys.put((char)kf.getkey(),kf); break;
+			case KeyFunction.CTRL:	 ckeys.put(kf.getkey(),kf);		  break;
+			}
+		}
+	}
+	
     public RootWidget(UI ui, Coord sz) {
 	super(ui, new Coord(0, 0), sz);
 	setfocusctl(true);
@@ -53,63 +75,26 @@ public class RootWidget extends ConsoleHost {
     }
 	
     public boolean globtype(char key, KeyEvent ev) {
-	if(!super.globtype(key, ev)) {
-	    int code = ev.getKeyCode();
-	    boolean ctrl = ev.isControlDown();
-	    boolean alt = ev.isAltDown();
-	    if(Config.profile && (key == '`')) {
-		new Profwnd(ui.slen, ui.mainview.prof, "MV prof");
-	    } else if(Config.profile && (key == '~')) {
-		new Profwnd(ui.slen, gprof, "Glob prof");
-	    } else if(Config.profile && (key == '!')) {
-		new Profwnd(ui.slen, ui.mainview.mask.prof, "ILM prof");
-	    } else if((code == KeyEvent.VK_N)&&ctrl) {
-		Config.nightvision = !Config.nightvision;
-	    } else if((code == KeyEvent.VK_X)&&ctrl) {
-		Config.xray = !Config.xray;
-	    } else if((code == KeyEvent.VK_C)&&alt) {
-		Config.muteChat = !Config.muteChat;
-		String str = "Chat mute is turned "+((Config.muteChat)?"ON":"OFF");
-		ui.cons.out.println(str);
-		ui.slen.error(str);
-	    } else if((code == KeyEvent.VK_F)&&ctrl) {
-		Config.fps = !Config.fps;
-	    } else if((code == KeyEvent.VK_K)&&ctrl) {
-		Config.TEST = !Config.TEST;
-	    } else if((code == KeyEvent.VK_D)&&ctrl) {
-		Config.dbtext = !Config.dbtext;
-	    } else if((code == KeyEvent.VK_P)&&ctrl) {
-		Config.profile = !Config.profile;
-	    } else if((code == KeyEvent.VK_H)&&ctrl) {
-		Config.hide = !Config.hide;
-	    } else if((code == KeyEvent.VK_Q)&&alt) {
-		ui.spd.setspeed(0, true);
-	    } else if((code == KeyEvent.VK_W)&&alt) {
-		ui.spd.setspeed(1, true);
-	    } else if((code == KeyEvent.VK_E)&&alt) {
-		ui.spd.setspeed(2, true);
-	    } else if((code == KeyEvent.VK_R)&&alt) {
-		ui.spd.setspeed(3, true);
-	    } else if((code == KeyEvent.VK_G)&&ctrl) {
-		Config.grid = !Config.grid;
-	    } else if((code == KeyEvent.VK_G)&&alt) {
-		IRChatHW.open();
-	    } else if(((int)key == 2)&ctrl) {//CTRL-B have code of 02
-		BuddyWnd.instance.visible = !BuddyWnd.instance.visible;
-	    } else if(((int)key == 20)&ctrl) {//CTRL-T have code of 20
-		CharWnd.instance.toggle();
-	    } else if(code == KeyEvent.VK_HOME) {
-		ui.mainview.resetcam();
-	    } else if(code == KeyEvent.VK_END) {
-		screenshot = true;
-	    } else if(key == ':') {
-		entercmd();
-	    } else if(key != 0) {
-		wdgmsg("gk", (int)key);
-	    }
-	}
-	return(true);
+		if(!super.globtype(key, ev)) {
+			if(ev.isAltDown() && akeys.get(key) != null)
+				akeys.get(key).dokey(ui,ev);
+			else if(keys.get(key) != null)
+				keys.get(key).dokey(ui,ev);
+		}
+		return(true);
     }
+	
+	public boolean keydown(KeyEvent ev){
+		if(!super.keydown(ev)){
+			if(MenuGrid.instance != null && (MenuGrid.instance.digitbar.checkKey((char)0,ev) || MenuGrid.instance.functionbar.checkKey((char)0,ev) || MenuGrid.instance.numpadbar.checkKey((char)0,ev)))
+				return(true);
+			if(ev.isControlDown() && ckeys.get(ev.getKeyCode()) != null)
+				ckeys.get(ev.getKeyCode()).dokey(ui,ev);
+			else if(skeys.get(ev.getKeyCode()) != null)
+				skeys.get(ev.getKeyCode()).dokey(ui,ev);
+		}
+		return(true);
+	}
 
     public void draw(GOut g) {
 	if(screenshot&&Config.sshot_noui){visible = false;}
@@ -128,15 +113,6 @@ public class RootWidget extends ConsoleHost {
 	    } catch (GLException e){e.printStackTrace();}
 	    catch (IOException e){e.printStackTrace();}
 	}
-	
-//	if(!afk && (System.currentTimeMillis() - ui.lastevent > 300000)) {
-//	    afk = true;
-//	    Widget slen = findchild(SlenHud.class);
-//	    if(slen != null)
-//		slen.wdgmsg("afk");
-//	} else if(afk && (System.currentTimeMillis() - ui.lastevent < 300000)) {
-//	    afk = false;
-//	}
 	if(Config.fps){
 	    long now = System.currentTimeMillis();
 	    ticks++;

@@ -61,7 +61,7 @@ public class OptWnd extends Window {
     }
 
     public OptWnd(Coord c, Widget parent) {
-	super(c, new Coord(550, 445), parent, "Options");
+	super(c, new Coord(550, 475), parent, "Options");
 
 	body = new Tabs(Coord.z, new Coord(530, 445), this) {
 	    public void changed(Tab from, Tab to) {
@@ -252,6 +252,27 @@ public class OptWnd extends Window {
 			}
 		    }).a = Config.hearthred;
 		
+	   new TextEntry(new Coord( 220+(new Label(new Coord(220,460),tab,"Tiles per click")).sz.x+10 ,420),new Coord(30,20),tab,Integer.toString(Config.tiles_per_click)){
+	          public boolean type(char c,java.awt.event.KeyEvent ev){
+	              if((c>=48 && c<=57) || c==8){
+	              super.type(c, ev);
+	              if(this.buf.line.length()>0){
+	                  Config.tiles_per_click = Integer.parseInt(buf.line);
+	                  Config.saveOptions();
+	              }
+	              }
+	              return true;
+	          }
+	          };
+
+          (new CheckBox(new Coord(220, 475), tab, "Lock ui") {
+              public void changed(boolean val) {
+              Config.global_ui_lock = val;
+              Config.saveOptions();
+              }
+          }).a = Config.global_ui_lock;
+	          
+	        
 	    Widget editbox = new Frame(new Coord(440, 30), new Coord(90, 100), tab);
 	    new Label(new Coord(20, 10), editbox, "Edit mode:");
 	    RadioGroup editmode = new RadioGroup(editbox) {

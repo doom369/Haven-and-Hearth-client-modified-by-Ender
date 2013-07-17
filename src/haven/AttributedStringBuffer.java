@@ -26,13 +26,35 @@
 
 package haven;
 
-import java.text.AttributedCharacterIterator;
-import java.text.AttributedCharacterIterator.Attribute;
-import java.text.AttributedString;
-import java.util.Map;
+import java.util.*;
+import java.text.*;
+import static java.text.AttributedCharacterIterator.Attribute;
 
 public class AttributedStringBuffer {
     private AttributedString current = new AttributedString("");
+    
+    public static String gettext(AttributedCharacterIterator s) {
+	StringBuilder tbuf = new StringBuilder();
+	for(int i = s.getBeginIndex(); i < s.getEndIndex(); i++)
+	    tbuf.append(s.setIndex(i));
+	return(tbuf.toString());
+    }
+    
+    public static void dump(AttributedCharacterIterator s, java.io.PrintStream out) {
+	int cl = 0;
+	Map<? extends Attribute, ?> attrs = null;
+	for(int i = s.getBeginIndex(); i < s.getEndIndex(); i++) {
+	    char c = s.setIndex(i);
+	    if(i >= cl) {
+		attrs = s.getAttributes();
+		out.println();
+		out.println(attrs);
+		cl = s.getRunLimit();
+	    }
+	    out.print(c);
+	}
+	out.println();
+    }
 
     public static AttributedString concat(AttributedCharacterIterator... strings) {
 	StringBuilder tbuf = new StringBuilder();

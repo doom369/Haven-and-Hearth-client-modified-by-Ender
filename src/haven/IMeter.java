@@ -36,7 +36,10 @@ public class IMeter extends Widget {
     static Coord msz = new Coord(49, 4);
     Resource bg;
     List<Meter> meters;
-    
+	
+	boolean dm;
+	Coord doff;
+	
     static {
 	Widget.addtype("im", new WidgetFactory() {
 		public Widget create(Coord c, Widget parent, Object[] args) {
@@ -94,4 +97,35 @@ public class IMeter extends Widget {
 	    super.uimsg(msg, args);
 	}
     }
+	
+	public boolean mousedown(Coord c, int button) {
+		super.mousedown(c,button);
+		parent.setfocus(this);
+		raise();
+		if (button == 1) {
+			ui.grabmouse(this);
+			doff = c;
+			dm = true;
+		}
+		return (true);
+	}
+
+	public boolean mouseup(Coord c, int button) {
+		if (dm) {
+			ui.grabmouse(null);
+			dm = false;
+			Config.setWindowOpt(bgname, this.c.toString());
+		} else {
+			super.mouseup(c, button);
+		}
+		return (true);
+	}
+
+	public void mousemove(Coord c) {
+		if (dm && !Config.global_ui_lock) {
+			this.c = this.c.add(c.add(doff.inv()));
+		} else {
+			super.mousemove(c);
+		}
+	}
 }

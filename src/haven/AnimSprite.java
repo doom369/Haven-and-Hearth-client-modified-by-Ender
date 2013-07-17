@@ -26,8 +26,7 @@
 
 package haven;
 
-import java.util.Collection;
-import java.util.LinkedList;
+import java.util.*;
 
 public class AnimSprite extends ImageSprite {
     private Frame[] frames;

@@ -26,6 +26,8 @@
 
 package haven;
 
+import haven.Text.Foundry;
+
 import java.awt.Color;
 import java.awt.Font;
 
@@ -51,10 +53,17 @@ public class ComMeter extends Widget {
     static Coord bgc = new Coord(68,35);
     static Coord bgr = new Coord(27,27);
     static Color offcol = new Color(255, 0, 0), defcol = new Color(0, 0, 255);
-    
+    static Tex scales[];
     Fightview fv;
-    boolean dm;
-    Coord doff;
+	
+	boolean dm;
+	Coord doff;
+    
+    static {
+        scales = new Tex[11];
+        for(int i = 0; i <= 10; i++)
+            scales[i] = Resource.loadtex(String.format("gfx/hud/combat/com/%02d", i));
+    }
     
     public ComMeter(Coord c, Widget parent, Fightview fv) {
         super(c, sword.sz(), parent);
@@ -115,9 +124,9 @@ public class ComMeter extends Widget {
 	g.image(ip,ipcr);
 	g.chcolor(0,0,0,255);
 	if(rel != null){
-	    g.aimage(fnd.render(String.format("%d",rel.oip)).tex(),ipcr.add(6,4),0.5,0.5);
-	    g.aimage(fnd.render(String.format("%d",rel.ip)).tex(),ipcf.add(6,4),0.5,0.5);
-    }
+	    g.aimage(fnd.render(String.format("%d",rel.ip)).tex(),ipcr.add(6,4),0.5,0.5);
+	    g.aimage(fnd.render(String.format("%d",rel.oip)).tex(),ipcf.add(6,4),0.5,0.5);
+	}
     }
 	
     public boolean mousedown(Coord c, int button) {
@@ -145,7 +154,7 @@ public class ComMeter extends Widget {
 	
     public void mousemove(Coord c) {
 
-		if(dm) {
+		if(dm && !Config.global_ui_lock) {
 		    this.c = this.c.add(c.add(doff.inv()));
 		}else
 			super.mousemove(c);

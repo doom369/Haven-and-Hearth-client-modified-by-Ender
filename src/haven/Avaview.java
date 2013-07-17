@@ -1,7 +1,7 @@
 /*
  *  This file is part of the Haven & Hearth game client.
  *  Copyright (C) 2009 Fredrik Tolf <fredrik@dolda2000.com>, and
- *                     BjÃ¶rn Johannessen <johannessen.bjorn@gmail.com>
+ *                     Björn Johannessen <johannessen.bjorn@gmail.com>
  *
  *  Redistribution and/or modification of this file is subject to the
  *  terms of the GNU Lesser General Public License, version 3, as
@@ -26,11 +26,11 @@
 
 package haven;
 
-import java.awt.*;
-import java.util.LinkedList;
-import java.util.List;
+import java.awt.Color;
+import java.util.*;
 
 public class Avaview extends Widget {
+	static final String POSKEY = "pava_pos";
     public static final Coord dasz = new Coord(74, 74);
     private Coord asz;
     int avagob;
@@ -44,6 +44,9 @@ public class Avaview extends Widget {
     static {
 	Widget.addtype("av", new WidgetFactory() {
 		public Widget create(Coord c, Widget parent, Object[] args) {
+			if(UI.instance.mainview != null && UI.instance.mainview.playergob == (Integer)args[0]){
+				c = new Coord(Config.window_props.getProperty(POSKEY,c.toString()));
+			}
 		    return(new Avaview(c, parent, (Integer)args[0]));
 		}
 	    });
@@ -80,11 +83,11 @@ public class Avaview extends Widget {
     }
 	
     public void uimsg(String msg, Object... args) {
-	if(msg.equals("upd")) {
+	if(msg == "upd") {
 	    this.avagob = (Integer)args[0];
 	    return;
 	}
-	if(msg.equals("ch")) {
+	if(msg == "ch") {
 	    List<Indir<Resource>> rl = new LinkedList<Indir<Resource>>();
 	    for(Object arg : args)
 		rl.add(ui.sess.getres((Integer)arg));
@@ -146,9 +149,22 @@ public class Avaview extends Widget {
 	    }
 	    return null;
     }
+    }
+	
     
     public boolean mousedown(Coord c, int button) {
 	wdgmsg("click", button);
 	return(true);
+    }
+    public void mousemove(Coord c) {
+		if(dm && !Config.global_ui_lock) {
+			if(ui.mainview != null && avagob == ui.mainview.playergob){
+				this.c = this.c.add(c.add(doff.inv()));
+			} else if(parent instanceof Partyview)  {
+				((Partyview)parent).moveparty(c.add(doff.inv()));
+			} 
+		} else {
+		    super.mousemove(c);
+		}
     }
 }

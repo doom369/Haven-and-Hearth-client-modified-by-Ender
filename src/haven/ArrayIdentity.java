@@ -26,9 +26,8 @@
 
 package haven;
 
+import java.util.*;
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Iterator;
 
 public class ArrayIdentity {
     private static HashMap<Entry<?>, Entry<?>> set = new HashMap<Entry<?>, Entry<?>>();

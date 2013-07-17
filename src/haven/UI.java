@@ -28,10 +28,10 @@ package haven;
 
 import haven.CharWnd.Study;
 
-import java.awt.event.InputEvent;
+import java.util.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.*;
+import java.awt.event.InputEvent;
 
 public class UI {
     static public UI instance;
@@ -55,6 +55,9 @@ public class UI {
     public FSMan fsm;
     public Console cons = new WidgetConsole();
     private Collection<AfterDraw> afterdraws = null;
+	
+	public KeyBindWnd kbw = null;
+	boolean[] keys = new boolean[522];
 	
     public interface Receiver {
 	public void rcvmsg(int widget, String msg, Object... args);
@@ -259,6 +262,8 @@ public class UI {
 	
     public void keydown(KeyEvent ev) {
 	setmods(ev);
+	if(ev.getKeyCode() <= 522  && ev.getKeyCode() > 0)
+		keys[ev.getKeyCode()-1] = true;
 	if(keygrab == null) {
 	    if(!root.keydown(ev))
 		root.globtype((char)0, ev);
@@ -269,6 +274,8 @@ public class UI {
 	
     public void keyup(KeyEvent ev) {
 	setmods(ev);
+	if(ev.getKeyCode() <= 522 && ev.getKeyCode() > 0)
+		keys[ev.getKeyCode()-1] = false;
 	if(keygrab == null)
 	    root.keyup(ev);
 	else

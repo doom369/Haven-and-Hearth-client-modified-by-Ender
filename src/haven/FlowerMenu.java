@@ -26,8 +26,8 @@
 
 package haven;
 
-import java.awt.*;
-
+import java.awt.Color;
+import java.awt.Font;
 import static java.lang.Math.PI;
 
 public class FlowerMenu extends Widget {
@@ -205,11 +205,11 @@ public class FlowerMenu extends Widget {
     }
 	
     public void uimsg(String msg, Object... args) {
-	if(msg.equals("cancel")) {
+	if(msg == "cancel") {
 	    anim = new Cancel();
 	    ui.grabmouse(null);
 	    ui.grabkeys(null);
-	} else if(msg.equals("act")) {
+	} else if(msg == "act") {
 	    anim = new Chosen(opts[(Integer)args[0]]);
 	    ui.grabmouse(null);
 	    ui.grabkeys(null);
